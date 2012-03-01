@@ -1,0 +1,54 @@
+<tool id="campRGeno1" name="CAMP lped maker:">
+    <code file="campRGeno_code.py"/> 
+  
+    <description>(experimental) for a region of interest</description>
+  
+    <command interpreter="python">
+        campRGeno.py $region "$rslist" "$title" $output1 $log_file $userId
+    </command>
+    
+    <inputs>
+       <param name="region" type="text" label="Region" 
+        size="80" help="A typical region looks like chr9:119,506,000-119,518,000 Leave blank if you prefer to extract the rs list supplied below."/>
+
+       <param name="rslist" type="text" area='true' size='5x20' label="rs list"
+       help="List of rs numbers to select - cut and paste or type, use space delimiters. Leave blank if you prefer to extract a region supplied above."  />
+
+       <param name="title" type="text" size="80" label="Title for output files" 
+        help="Provide a meaningful title to be used to name the new genotype/map files to be created" value="Mygenos" />      
+
+       <param name="dbkey" type="select" label="Genome build" help="Use hg18 for illumina data"
+       dynamic_options = "get_available_builds(defval='hg18')" />
+
+   </inputs>
+
+   <outputs>  
+       <data format="rgenetics" name="output1" />
+       <data format="txt" name="log_file" parent="output1" />
+
+   </outputs>
+<help>
+
+
+**Syntax**
+
+- **Region** is the genomic region cut and paste from a UCSC browser location window
+- **Genome Build** is the version of the genome your markers are from - use hg18 for CAMP illumina data
+
+-----
+
+**Summary**
+
+This tool is a special purpose tool to extract genotypes from the CAMP 550KV3 Illumina run of
+Summer, 2007 over a specified genomic region (given as a UCSC browser location - eg ). It 
+takes a tab delimited file containing rs chrom offset float1..floatn and cuts out a region and
+a subset of the columns into a tabular file.
+
+( This tool is based on Ross's CAMPSubset Galaxy Tool. )
+
+John Ziniti (rejpz@channing.harvard.edu)
+September 2007
+released under the LGPL. see documentation for license terms.
+
+</help>
+</tool>

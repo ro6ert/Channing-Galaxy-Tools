@@ -1,0 +1,42 @@
+<tool id="rgSNPMatrixMaker1" name="Convert lped">
+  <code file="rgSNPMatrixMaker_code.py"/> 
+    <description>into snpMatrix format</description>
+  
+    <command interpreter="python">
+        rgSNPMatrixMaker.py '$input_file.extra_files_path' '$input_file.metadata.base_name'
+        '$outfile1' '$outfile1.files_path' '$title' '$logpath' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R'           
+
+    </command>
+    
+    <inputs>    
+       <param name="input_file"  type="data" label="Input Linkage pedigree genotype history file"
+         size="80" format="lped" />
+       <param name="title" type="text" size="80" label="Output snpMatrix file name" value="mysnpMatrix"/>
+   </inputs>
+
+   <outputs>  
+       <data format="snpmatrix" name="outfile1" metadata_source="input_file"  />
+       <data format="txt" name="logpath" parent="outfile1"  />
+   </outputs>
+<help>
+
+
+**Syntax**
+
+- **Input data** is the input pedfile chosen from available library files
+- **Output** is the name to use for the snpMatrix R file
+
+-----
+
+**Summary**
+
+This tool will convert a linkage format pedigree file into a snpMatrix
+file for use in other Galaxy snpMatrix based tools or downloaded for your
+own use in R.
+
+This Galaxy tool was written by Ross Lazarus for the Rgenetics project
+snpMatrix is from David Clayton's group and available as part of BioConductor
+See http://bioconductor.org/packages/2.2/bioc/html/snpMatrix.html
+
+</help>
+</tool>

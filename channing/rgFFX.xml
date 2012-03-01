@@ -1,0 +1,100 @@
+<tool id="rgFFX1" name="GGtools:">
+    <description>GeneId/probeId lookup</description>
+    <command interpreter="">
+`/udd/stvjc/bin/R211q RHOME`/bin/Rscript /share/shared/galaxy/tools/channing/rgFFX.R "$FFX" "$GENEID" "$GCHROM" "$SNPCHROM" "wig" 1>/dev/null 2>/dev/null ; mv gt.wig $out_file1
+    </command>
+    <inputs>
+      <param name="FFX"  type="text" size="30" value="ffx2demo" label="FFX name" />
+      <param name="GENEID"  type="text" size="30" label="Gene symbol or Probe ID to lookup" value="GI_9951914-S" />
+       <param name='GCHROM' type='text' size="10" value="1" label="Chromosome for Gene"/>
+       <param name='SNPCHROM' type='text' size="10" value="20" label="Chromosome for SNP"/>
+       <param name="dbkey" type="hidden" value='hg18' />
+    </inputs>
+   <outputs>
+    <data name="out_file1" format="wig">
+    <!--
+      <change_format>
+        <when input="OUTFMT" value="bed" format="bed" />
+        <when input="OUTFMT" value="bedGraph" format="bedgraph" />
+        <when input="OUTFMT" value="wig" format="wig" />
+      </change_format>
+    -->
+    </data>
+   </outputs>
+
+
+<tests>
+ <test>
+    <param name='FFX' value='ffx2demo' />
+  <param name='GCHROM' value='1' />
+  <param name='SNPCHROM' value='20' />
+  <param name='GENEID' value='GI_9951914-S' />
+  <param name='OUTFMT' value='wig' />
+  <output name='out_file1' file='rgtestouts/gt.wig'>
+  </output>
+ </test>
+</tests>
+
+
+<help>
+
+.. class:: infomark
+
+**Explanation**
+
+This tool will do mysterious things to be revealed later when Vince has time to provide some documentation in text format
+to replace what's here now. For the curious, here's the R code
+
+::
+
+ Wed,May 12 at 10:24pm cat /udd/stvjc/GALAX/x2wig.R
+ # x2wig.R
+ # demonstrate galaxy interface to GGtools
+ # parameters: package holding ffX2 resources, probeID, ffchrind, snplocchr
+ args = commandArgs(TRUE)
+ pkg = args[1]
+ probeID = args[2]
+ ffchrind = as.numeric(args[3])
+ snplocchr = args[4]
+ if (length(args) != 4) stop("need args pkg probeID ffchrind snplocind")
+ library(pkg, character.only=TRUE)
+ mgr = setupFF()  # must be in pkg
+ library(snpLocs130)
+ snplocref = data(list=paste("snpLocs_", snplocchr, sep=""))
+ library(GGtools)
+ gt = geneTrack(mgr, probeID, ffchrind, snpLocs_20)
+ wgt = width(gt)
+ gt = gt[ width(gt) == 1, ]
+ export(gt, "gt.wig")
+
+-----
+
+.. class:: infomark
+
+
+**Syntax**
+
+- **FFX name** is the input dataset chosen from available files for this tool
+- **Gene/Probe ID** will be used as the target for the analysis
+- **Chromosome for Gene** will likely disappear soon but is here for testing
+- **Chromosome for SNP** will likely disappear soon but is here for testing
+
+**Summary**
+
+TBA 
+
+-----
+
+.. class:: infomark
+
+**Attribution**
+
+TBA
+
+Galaxy tool wrapper for the Rgenetics Galaxy SNP/WGA toolkit Copyright Ross Lazarus 2010 Licensed under the terms of the LGPL as documented at http://www.gnu.org/licenses/lgpl.html
+
+About as useful as a chocolate teapot without the work of many, many other people in creating and maintaining Galaxy, R, 
+Bioconductor and so on.
+ 
+</help> 
+</tool>

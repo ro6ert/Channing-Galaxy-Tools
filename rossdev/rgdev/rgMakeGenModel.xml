@@ -1,0 +1,77 @@
+<tool id="rgMakeGenModel1" name="Recode genotypes:">
+    <code file="rgMakeGenModel_code.py"/>
+
+    <description>into genetic model codes</description>
+
+    <command interpreter="python">
+    rgMakeGenModel.py -t "$title" -p "$lhistIn.extra_files_path/$lhistIn.metadata.base_name"
+    -m "$model" -o "$output1" -l "$logfile" $founders
+    </command>
+
+    <inputs>
+<!--
+       <param name="lpedIn" type="select" dynamic_options="get_available_data('lped')"
+       label="Either: System library lPed format data" optional="true"
+        size="80" help="Linkage Ped format data from the local Library" />
+-->
+       <param name="lhistIn" type="data" format="lped"
+         label="Current history linkage pedigree format data file"
+        size="80" help="Linkage Ped format data from your current history - import if needed" />
+
+       <param name="founders" type="select" display="radio"
+       label="Include founders only, offspring only or all subjects in output" >
+       <option value="-f -c" selected="true">Include all subjects (founders and offspring)</option>
+       <option value="-f">Founders only (subjects without parent ids)</option>
+       <option value="-c">Offspring only (subjects with parent ids)</option>
+       </param>
+
+       <param name="title" type="text" size="80" label="Title for output file" optional="true"
+        help="Descriptive title for new genotype/map files" value="DescriptiveTitleGoesHerePlease" />
+
+       <param name="model" type="select" label="Genetic model to convert alleles to"
+        size="80" help="" >
+        <option value="a" selected="True">Additive (0,1,2 rare allele count)</option>
+        <option value="d">Dominant (0,1,1 for 0,1,2 rare alleles)</option>
+        <option value="r">Recessive (0,0,1 for 0,1,2 rare alleles)</option>
+    </param>
+       <param name="dbkey" type="hidden" value='hg18' />
+   </inputs>
+
+   <outputs>
+       <data format="tabular" name="output1" />
+       <data format="txt" name="logfile" parent="output1" />
+
+   </outputs>
+<help>
+
+**Note**
+
+The input file must be in linkage ped format. A suitable file can be chosen from the system library,
+or from the files already imported into your current history. Use either one of the selection boxes to
+make your choice.
+
+**Syntax**
+
+- **Library Linkage Ped** is a linkage format pedigree file chosen from the system file Library
+- **History Linkage Ped** is a linkage format pedigree file chosen from your current Galaxy History
+
+-----
+
+**Summary**
+
+This tool is a special purpose tool to estimate and plot linkage disequilibrium estimated
+from genotype data in linkage pedigree format (separate map file). All markers in the input file
+are used as the default. To limit the calculations to a subset of the input data, supply
+a specified genomic region in UCSC browser location format or a list of specific marker IDs.
+
+Note that you can choose either a file of the correct type (linkage pedigree - lped) from
+your current history **or** from the system library
+
+This tool currently calls Haploview for estimation and plots. For full attribution, source code and documentation, see
+http://www.broad.mit.edu/mpg/haploview/index.php
+
+Copyright, Ross Lazarus, April 2008 for the Rgenetics project
+Released under the LGPL. See http://www.gnu.org/licenses/lgpl.html for license terms.
+
+</help>
+</tool>

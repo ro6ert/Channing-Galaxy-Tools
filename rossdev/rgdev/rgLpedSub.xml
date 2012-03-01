@@ -1,0 +1,73 @@
+<tool id="rgLpedSubset1" name="Import and subset lped">
+  <description>from syslib into Plink binary format</description>
+<command interpreter="python">
+rgLpedSub.py '$i' '$log' '$log.extra_files_path' '$region' '$rslist' 
+</command>
+
+<inputs>
+    <param name="i" label="Select data to subset and convert" type="select" 
+    size="200" dynamic_options="get_available_data('lped')" />
+    <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+
+    <param name="region" type="text" label="Genomic refseq coordinates - chromosome:start-end" 
+    size="120" help="Leave blank to use rslist below otherwise region egchr9:119,506,000-119,518,000"/>
+
+    <param name="rslist" type="text" area='true' size='15x20' label="marker id (rs) list"
+    help="Leave blank for region, else cut and paste, or type a list of marker ids in --snps format - see below"  />    
+
+</inputs>
+<outputs>
+<data format="txt" name="log"/>
+</outputs>
+<code file="rgLpedSub_code.py"/>
+<help>
+
+.. class:: infomark
+
+**Notes on parameters**
+
+- **File to import** Choose a file from the files made available by your system administrator of the type specified 
+- **Title** Will appear in drop down lists so should be a meaningful brief name
+
+-----
+
+**Summary**
+
+
+This tool allows you to import new data sets into your current history from a library of files made available
+by your system administrator - the files must be placed in a specific place on the filesystem to appear here
+
+The input file can be selected from available lped files. The new file in your history will be a plink internal binary
+file set of the same base name
+
+Leave both range and rslist blank to convert the entire input data set.
+To filter by region, supply one in ucsc format as suggested above
+
+The Plink documentation for the alternative rs number list format is as follows:
+
+    Alternatively, the newer --snps command is more flexible but slower than the previously described
+    --snp and --from/--to commands. The --snps command will accept a comma-delimited list of SNPs,
+    including ranges based on physical position. For example,
+    plink --bfile mydata --snps rs273744-rs89883,rs12345-rs67890,rs999,rs222
+    selects the same range as above (rs273744 to rs89883) but also the separate range rs273744 to rs89883
+    as well as the two individual SNPs rs999 and rs222. Note that SNPs need not be on the same chromosome;
+    also, a range can span multiple chromosomes (the range is defined based on chromosome code order in that case,
+    as well as physical position, i.e. a range from a SNP on chromosome 4 to one on chromosome 6 includes all SNPs on chromosome 5).
+
+
+
+-----
+
+.. class:: infomark
+
+**Attribution**
+Originally designed and written for the Rgenetics
+series of Galaxy tools by Dan Blankenberg and modified
+by ross lazarus (ross.lazarus@gmail.com), who didn't write Galaxy
+but wishes he had.
+
+This tool uses Plink (http://pngu.mgh.harvard.edu/~purcell/plink/index.shtml) to create a Plink format binary  
+file for other rgenetics tools.
+
+</help>
+</tool>

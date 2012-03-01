@@ -1,0 +1,62 @@
+<tool id="rgfootest" name="test">
+  <description>of refresh</description>
+  <command interpreter="python">rgfakePed.py --title '$title1'  -o '$thing' </command>
+   <options refresh="True"/>
+   <inputs>
+   <conditional name="title2">
+
+    <param name="title1"
+         type="select" 
+         help="choose one"
+         label="Descriptive short name">
+           <option value="one" selected="true">Linkage format - separate .map file</option>
+           <option value="two">fbat style - marker names in a header row</option>
+    </param>
+    <when value="one">
+          <param name="thing" type="select" label="thing for one">
+            <option value="foo" selected="true">Foo</option>
+            <option value="bar">Bar</option>
+          </param>
+    </when>
+    <when value="two">
+          <param name="thing" type="select" label="thing for two">
+            <option value="zot" selected="true">Zot</option>
+            <option value="bee">Bee</option>
+          </param>
+    </when>
+    </conditional>
+</inputs>
+
+ <outputs>
+    <data format="lped" name="out_file1" />
+  </outputs>      
+
+<help>
+.. class:: infomark
+
+This tool allows you to generate an arbitrary (sort of)
+synthetic genotype file (no attempt at LD - the markers are independent)
+with optional missingness, Mendel errors, minor allele frequency settings, family structure
+These might be used for testing under
+the null hypothesis of no association and are certainly useful for
+scale testing.
+
+Note that although it runs reasonably fast given it's a script, generating a large data set takes
+a while. An hour or so should get you a reasonable (3GB) sized simulated null data set.. 
+
+A better simulator can easily be swapped in with this tool interface.
+
+-----
+
+.. class:: warningmark
+
+This tool is very experimental
+
+**Attribution**
+Designed and written for the Rgenetics Galaxy tools
+copyright Ross Lazarus 2007 (ross.lazarus@gmail.com)
+Licensed under the terms of the LGPL
+as documented http://www.gnu.org/licenses/lgpl.html
+
+</help>
+</tool>

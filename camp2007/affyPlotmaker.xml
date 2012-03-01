@@ -1,0 +1,134 @@
+<tool id="affyPlot1" name="Intensity Plot Maker">
+    <code file="illPlotmaker_code.py"/> 
+  
+    <description>for Affy 550k data</description>
+  
+    <command interpreter="python">
+        affyPlotmaker.py "$rslist" "$outfile1" "$outfile1.files_path" "$title" $height $width $mogrify "$region" "$nup"
+    </command>
+    
+    <inputs>
+       <param name="region" type="text" label="Genomic region to plot SNPs from (in UCSC browser style)" size="80"
+        help="A typical region - chr9:119,506,000-119,518,000. Leave blank to extract an rs list supplied below."
+        value="" />
+       <param name="rslist" type="text" area='true' size='5x20' label="Space separated list of RS numbers to plot"
+       help="List of rs numbers to plot. Use space delimiters. Leave blank to extract a region supplied above." 
+        value="" />
+       <param name="title" type="text" label="Descriptive title for the outputs - will appear on plot headers" size="80" /> 
+       <param name="height" type="integer" label="PDF image height (inches)" value="8" />
+       <param name="width" type="integer" label="PDF image width (inches)" value="6" />
+       <param name="nup" type="integer" label="Thumbnail pdf matrix size (3 is ok)" value="3"
+       help="3 means print 9 plots per page in a 3x3 matrix" />
+       <param name="mogrify" type="boolean" label="Show thumbnails?" checked="true"
+       help="Thumbnails take much longer, but allow a quick oreview of all the plots" />
+       <param name="dbkey" type="select" label="Genome build" help="Use hg18 for illumina data"
+       dynamic_options = "get_available_builds(defval='hg18')" />
+
+   </inputs>
+
+   <outputs>  
+       <data format="html" name="outfile1" />
+   </outputs>
+<help>
+
+
+**Syntax**
+
+- **RS numbers** are a list of rs numbers to plot. Leave blank to use a region
+- **Genomic region** is a set of genomic coordinates such as those used in the UCSC genome browser. Leave blank to use RS numbers
+- **Title** is a short descriptive title for the plots and this job 
+- **Height and Width** will determine the physical size of the pdf images
+- **Matrix size** will determine how many markers per page appear in the thumbnail pdf file
+- **Thumbnails** allow you to preview each marker in the Galaxy workspace but take additional time per SNP to generate
+- **Genome Build** is the version of the genome your markers are from - use hg18 for CAMP illumina data
+
+**Note that if a region is supplied, any rs list contents will be ignored**
+
+-----
+
+**Summary**
+
+This tool is a special purpose tool to extract intensity values from a pre-processed database 
+from the affy 500k Framingham dbgap/share data. 
+Plots are generated that resemble those available from the beadstudio software - 
+allele1/allele2. Genotypes are colour and plot character 
+coded - not quite so pretty, but easier than reloading the full call report on the beadstation.
+
+Ross Lazarus
+November 2007
+released under the LGPL. see documentation for license terms.
+
+Here's a long list of rs numbers for testing:
+rs4878061
+rs6832093
+rs10500444
+rs7653834
+rs9600880
+rs10832710
+rs2837906
+rs1338127
+rs698774
+rs17036771
+rs7193402
+rs11742607
+rs7591885
+rs4365835
+rs9303464
+rs1887376
+rs17339556
+rs12084236
+rs992131
+rs13392392
+rs655458
+rs12363415
+rs932252
+rs874967
+rs10499191
+rs16855127
+rs1584422
+rs10506678
+rs2240420
+rs16917466
+rs3755828
+rs10883359
+rs1350991
+rs2057805
+rs4241156
+rs2816992
+rs1203735
+rs630592
+rs1125262
+rs7541753
+rs16957658
+rs1455982
+rs17093334
+rs16859422
+rs1093338
+rs13105399
+rs941855
+rs6590292
+rs9672868
+rs7110
+rs429725
+rs41421547
+rs199208
+rs889936
+rs17057230
+rs1444922
+rs9324975
+rs1626645
+rs17494319
+rs7959938
+rs6505290
+rs12567977
+rs10986985
+rs6878759
+rs41438152
+rs16966555
+rs12626103
+rs1011077
+rs11113960
+
+
+</help>
+</tool>

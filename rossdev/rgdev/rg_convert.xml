@@ -1,0 +1,71 @@
+<tool id="rg_convert" name="Convert RG formats:" version='0.02'>
+<description>Switch between rgenetics data formats</description>
+ <command interpreter="python">
+   rg_convert.py '$incond.inpath.extra_files_path/$incond.inpath.metadata.base_name' '$incond.intype' '$outfile' '$outtype' '$outfile.extra_files_path'
+ </command>
+
+<inputs>
+    <page>
+    <conditional name="incond">
+        <param name="intype" type="select" label="Input Datatype">
+          <option value="lped" selected="true">Linkage format pedigree (fat, slow)</option>
+          <option value="pbed">Plink binary format (lean, mean)</option>
+          <!-- <option value="eigenstratgeno">Eigenstrat (NOT working yet!)</option> -->
+        </param>
+        <when value="lped">
+          <param name="inpath" label="Select Linkage pedigree format History file to convert" 
+            type="data" format="lped" />
+        </when>
+        <when value="pbed">
+         <param name="inpath" label="Select Plink binary format History file to convert"
+            type="data" format="pbed" />
+        </when>
+        <when value="eigenstratgeno">
+         <param name="inpath" label="Select Eigenstrat format History file to convert"  
+            type="data" format="eigenstratgeno" />
+        </when>
+    </conditional>
+    </page>
+    <page>
+        <param name="outtype" type="select" label="Output formats">
+          <option value="lped">Linkage format pedigree (fat, slow)</option>
+          <option value="pbed" selected="true">Plink binary format (lean, mean)</option>
+          <!-- <option value="eigenstratgeno">Eigenstrat (NOT working yet!)</option> -->
+        </param>
+    </page>
+
+</inputs>
+<outputs>
+<data format="Rgenetics" name="outfile"  metadata_source="inpath" />
+</outputs>
+<code file="rg_convert_code.py"/>
+<help>
+
+**Notes on parameters**
+
+- **Input Datatype** Choose the type of data you want to convert - the source file of this type must be in your current history
+- **Select [datatype] file to convert** Choose a file from your current history of the type specified 
+- **Output format** Choose the datatype to convert the selected file into
+
+
+**Summary**
+
+
+This tool allows you to convert existing rgenetics format data in your current history into other rgenetics formats.
+
+The input file can be selected from current history files. The new file in your history will be the same data in the chosen
+output format, with the same base name
+
+-----
+
+
+**Attribution**
+Originally designed and written for the Rgenetics
+series of Galaxy tools by Dan Blankenberg and modified
+by ross lazarus (ross.lazarus@gmail.com), who didn't write Galaxy
+but wishes he had.
+This tool uses Plink (http://pngu.mgh.harvard.edu/~purcell/plink/index.shtml) for Plink conversions and the Convert utility
+from eigensoft for eigenstrat conversions
+
+</help>
+</tool>

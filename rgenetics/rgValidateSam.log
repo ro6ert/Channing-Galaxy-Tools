@@ -1,0 +1,22 @@
+## executing samtools sort /udd/rerla/rgalaxy/database/files/000/dataset_23.dat /tmp/dataset_36_files/rgcleansam.sorted returned status 0. Nothing appeared on stderr/stdout
+
+## rgPicardValidate.py about to Popen:
+java -Xmx8g  -jar  /udd/rerla/rgalaxy/tool-data/shared/jars/ValidateSamFile.jar  O=/tmp/dataset_36_files/rgPicardValidate.out  TMP_DIR=/tmp  I=/tmp/dataset_36_files/rgcleansam.sorted.bam  MAX_OUTPUT=1000  R=/data/ucsc/hg18/Homo_sapiens_assembly18.fasta
+/n## /tmp/dataset_36_files/rgPicardValidate_Clean.out got 8 rows - first few =[Thu Mar 31 13:43:37 EDT 2011] net.sf.picard.sam.ValidateSamFile INPUT=/tmp/dataset_36_files/rgcleansam.sorted.bam OUTPUT=/tmp/dataset_36_files/rgPicardValidate.out MAX_OUTPUT=1000 REFERENCE_SEQUENCE=/data/ucsc/hg18/Homo_sapiens_assembly18.fasta TMP_DIR=/tmp    MODE=VERBOSE IGNORE_WARNINGS=false VALIDATE_INDEX=true IS_BISULFITE_SEQUENCED=false MAX_OPEN_TEMP_FILES=8000 VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false
+
+[Thu Mar 31 13:43:37 EDT 2011] net.sf.picard.sam.ValidateSamFile done.
+
+Runtime.totalMemory()=9109504
+
+Exception in thread "main" net.sf.picard.PicardException: Cannot read non-existent file: /data/ucsc/hg18/Homo_sapiens_assembly18.fasta
+
+	at net.sf.picard.io.IoUtil.assertFileIsReadable(IoUtil.java:51)
+
+	at net.sf.picard.sam.ValidateSamFile.doWork(ValidateSamFile.java:100)
+
+	at net.sf.picard.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:156)
+
+	at net.sf.picard.sam.ValidateSamFile.main(ValidateSamFile.java:92)
+
+## /tmp/dataset_36_files/rgPicardValidate.out got 0 rows - first few =
+found 0 identifiable error sequences in picardErrors out of 0

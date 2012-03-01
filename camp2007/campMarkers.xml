@@ -1,0 +1,44 @@
+<tool id="camp550KV3" name="CAMP By Markers:">
+    <code file="campRS_code.py"/> 
+  
+    <description>Get 550KV3 results/genotypes based on a set of markers instead of a region</description>
+  
+    <command interpreter="python">
+        camp550KV3.py $region $out_file1
+    </command>
+    
+    <inputs>
+       <param name="region" type="text" label="Region" help="Cut and paste a UCSC browser region" 
+        size="80" value="chr9:119,506,000-119,518,000"/>
+       <param name="dbkey" type="select" label="Genome build" help="Use hg18 for illumina data"
+       dynamic_options = "get_available_builds(defval='hg18')" />
+
+   </inputs>
+
+   <outputs>  
+       <data format="text" name="out_file1" />
+   </outputs>
+<help>
+
+
+**Syntax**
+
+- **Genome Build** is the version of the genome your markers are from - use hg18 for CAMP illumina data
+
+-----
+
+**Summary**
+
+This tool is a special purpose tool to extract genotypes from the CAMP 550KV3 Illumina run of
+Summer, 2007 over a specified genomic region (given as a UCSC browser location - eg ). It 
+takes a tab delimited file containing rs chrom offset float1..floatn and cuts out a region and
+a subset of the columns into a tabular file.
+
+( This tool is based on Ross's CAMPSubset Galaxy Tool. )
+
+John Ziniti (rejpz@channing.harvard.edu)
+September 2007
+released under the LGPL. see documentation for license terms.
+
+</help>
+</tool>

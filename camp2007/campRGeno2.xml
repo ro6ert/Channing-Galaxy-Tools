@@ -1,0 +1,67 @@
+<tool id="campRGeno2" name="Extract genotypes from lped file">
+    <code file="campRGeno_code.py"/> 
+  
+    <description>(experimental) for a region of interest</description>
+  
+    <command interpreter="python">
+        campRGeno2.py "$region" "$rslist" "$title" "$output1" "$log_file" "$userId" "$lpedIn" "$lhistIn"
+    </command>
+    
+    <inputs>
+       
+       <param name="lpedIn" type="select" dynamic_options="get_available_data('lped')"
+       label="Ped format data from the System file Library" optional="true"
+        size="80" help="Library (system) Linkage Ped format file to extract markers from" />
+        
+       <param name="lhistIn" type="data" format="lped"
+       label="Ped format data from your current Galaxy history" optional="true"
+        size="80" help="Your current history Linkage Ped format file to extract markers from" />
+        
+       <param name="region" type="text" label="Region" 
+        size="80" help="A typical region looks like chr9:119,506,000-119,518,000 Leave blank if you prefer to extract the rs list supplied below."/>
+
+       <param name="rslist" type="text" area='true' size='5x20' label="rs list"
+       help="List of rs numbers to select - cut and paste or type, use space delimiters. Leave blank if you prefer to extract a region supplied above."  />
+
+       <param name="title" type="text" size="80" label="Title for output files" 
+        help="Provide a meaningful title to be used to name the new genotype/map files to be created" value="Mygenos" />      
+
+       <param name="dbkey" type="select" label="Genome build" help="Use hg18 for illumina data"
+       dynamic_options = "get_available_builds(defval='hg18')" />
+
+   </inputs>
+
+   <outputs>  
+       <data format="rgenetics" name="output1" />
+       <data format="txt" name="log_file" parent="output1" />
+
+   </outputs>
+<help>
+
+
+**Syntax**
+
+- **Library Linkage Ped** is a linkage format pedigree file chosen from the system file Library
+- **History Linkage Ped** is a linkage format pedigree file chosen from your current Galaxy History
+- **Region** is the genomic region cut and paste from a UCSC browser location window
+- **Genome Build** is the version of the genome your markers are from - use hg18 for CAMP illumina data
+
+-----
+
+**Summary**
+
+This tool is a special purpose tool to extract genotypes from genotype data in linkage
+pedigree format (separate map file) over a specified genomic region
+The region to be extracted can be described as UCSC browser location, or as a list of
+markers.
+
+Note that you can choose either a file of the correct type (linkage pedigree - lped) from
+your current history **or** from the system library
+
+The extracted data will appear in your current history as a new lped data set
+
+Copyright, Ross Lazarus, March 2008 for the Rgenetics project
+Released under the LGPL. See http://www.gnu.org/licenses/lgpl.html for license terms.
+
+</help>
+</tool>

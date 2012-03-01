@@ -1,0 +1,69 @@
+<tool id="rgResSubset" name="Subset WGA results:">
+    <code file="rgResSubset_code.py"/> 
+   
+    <description>for a region or SNP rs list</description>
+  
+    <command interpreter="python">
+        rgResSubset.py '$input1' '$cols' '$r' '$name' '$out_file1' '$rslist'
+    </command>
+    
+    <inputs>    
+      <param name="input1"  type="data" label="RGenetics WGA results (gg) data from your current history"
+      format="gg" refresh_on_change="true"/>
+       <param name="name" type="text" label="Descriptive name for output file" value="My_favourite_gene" size="80"/>
+       <param name="r" type="text" label="Genomic region in UCSC genome browser format - chr:start-end" 
+        size="80" help="A typical region looks like chr9:119,506,000-119,518,000 Leave blank if you prefer to extract the rs list supplied below."/>
+       <param name="rslist" type="text" area='true' size='5x20' label="rs list"
+       help="List of rs numbers to select - cut and paste or type, use space delimiters. Leave blank if you prefer to extract a region supplied above."  />
+       <param name="dbkey" type="select" label="Genome build" help="Use hg18 for illumina data"
+       dynamic_options = "get_available_builds(defval='hg18')" />
+       <param name="cols" type="select" label="Columns to include" help="Select all columns you want returned" 
+         size="80"
+        multiple="true" dynamic_options="getcols('/usr/local/galaxy/data/camp2007/camp2007.xls')"/>
+   </inputs>
+
+   <outputs>  
+       <data format="gg" name="out_file1" />
+   </outputs>
+<help>
+
+
+**Syntax**
+
+- **Name** is the name to give the results file for this run 
+- **Region** is the genomic region cut and paste from a UCSC browser location window. Leave this blank if you prefer to use an rs list
+- **rs list** is a space or newline delimited list of rs numbers. Leave this field blank if you prefer to use a region
+- **Genome Build** is the version of the genome your markers are from - use hg18 for CAMP illumina data
+- **Columns** are the pvalues and power values you want to save
+
+Here's a long list of rs numbers from the CAMP/CostaRica replication if you want some valid markers for testing:
+rs1006368 rs1039603 rs1048329 rs10797666 rs10865745 rs11059460 rs1106349 rs11073206 rs11189833 rs1122401 rs11245330
+rs11760243 rs12065553 rs12095496 rs12104793 rs12118987 rs12247820 rs12452392 rs12637875 rs12672614 rs1267818 rs12734338
+rs12743401 rs1288548 rs12998999 rs13007239 rs13008209 rs13267437 rs1332776 rs1384607 rs1410600 rs1413077 rs1448961 rs1462920
+rs1499417 rs1532673 rs1536506 rs1538549 rs1589968 rs17118897 rs174627 rs17580427 rs17786786 rs1873921 rs1880666 rs1894670 rs1901127
+rs192448 rs1937787 rs1955747 rs2041127 rs2279607 rs2285781 rs2292005 rs2389016 rs2440154 rs2478872 rs2495717 rs2504705 rs261119
+rs261125 rs261137 rs261159 rs261902 rs274962 rs2777899 rs2792103 rs2882586 rs3006014 rs3019330 rs3125524 rs319514 rs3734087 rs3752120
+rs3812351 rs3820580 rs4128396 rs4129709 rs4130135 rs4140798 rs4341862 rs4376156 rs4490127 rs4575638 rs4611118 rs4719220 rs4740480
+rs4806187 rs4862564 rs4865845 rs4890360 rs4930034 rs5746474 rs6477029 rs6667605 rs6704972 rs6711956 rs6728906 rs6729531 rs6859984 rs6864266
+rs6864728 rs6893622 rs6993479 rs7018178 rs7045644 rs7216104 rs7513249 rs772503 rs7730653 rs7831051 rs7974630 rs7975535 rs8023818 rs876519 rs9320538
+rs9322700 rs9404314 rs9463425 rs967244 rs10493662 rs7682957 rs1365640 rs12029757 rs9312239 rs42876 rs12352644 rs1041755 rs1217651 rs9474230
+rs11901445 rs10814809
+
+-----
+
+**Summary**
+
+This tool is a special purpose tool to cut specific columns (powers and pvalues) over a specified
+genomic region (given as a UCSC browser location - eg chr9:119,506,000-119,518,000) or from a list of selected rs numbers, from 
+a WGA statistical analysis output file. It 
+takes a tab delimited file containing rs chrom offset float1..floatn and cuts out a region and
+a subset of the columns into a tabular file. If you make sure that RS is included, the
+result that appears in your history will have a direct link to ucsc genome graphs for viewing
+in full genomic context
+
+ross lazarus (ross.lazarus@gmail.com)
+August 2007
+released under the LGPL. see documentation for license terms.
+
+</help>
+</tool>

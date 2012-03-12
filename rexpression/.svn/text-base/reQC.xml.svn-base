@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<tool id="reQC" name="QC">
+<description>
+using arrayQualityMetrics
+</description>
+<code file="reQC_code.py"/> 
+
+<command interpreter="python">
+    reQC.py '$i.extra_files_path/$i.metadata.base_name' '$title' '$outhtml' '$outhtml.files_path' 
+    '$logtran' '$i.metadata.pheno_path' '$i.name' '$splitplots' '$grouprep'
+    '$intgroup' '$dbkey' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R' 
+</command>
+ 
+ 	
+<inputs>
+   <page>
+    <param name="title" label="Title to label job output names" type="text" size="80" value="QC report" />
+    <param name="i" type="data" format="eset,affybatch,malist" 
+        label="Expression data set chosen from your history" optional="false"
+        size="120" help="Choose an expression (AffyBatch works best) data file from your current history" />      
+   </page>
+   <page>
+    <param name="intgroup" 
+    label="Phenotype column for QC comparisons - see int.group in ArrayQualityMetrics docs" 
+    type="select"   dynamic_options="get_phecols(i)"  
+    help="If there are NO choices here, it means you have no interesting phenotype columns - all different or all same!" />
+    <param name="logtran" label="Log transform expression values" 
+    type='boolean' checked='no' truevalue='True' falsevalue='False' />
+    <param name="grouprep" label="Show chosen grouping variable (if any) level membership" 
+    type='boolean' checked='no' truevalue='True' falsevalue='False' help="(temporarily disabled due to bug in arrayQualityMetrics)"/>
+    <param name="splitplots" label="If > 50 arrays, set a group size - see split.plots in ArrayQualityMetrics docs" 
+      type='integer' value='0'/>
+    <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+    /> 
+   </page>
+</inputs>
+
+    <outputs>  
+    <data format='html' name="outhtml" />
+</outputs>
+
+<help>
+
+
+**Syntax**
+
+- **Title** is used to name the output files - so make it meaningful
+- **History datafile to use** determines what class of input files you want to choose from
+- **Report QC input** is any Rexpression file with raw data (eg an affybatch) in your history 
+
+-----
+
+**Summary**
+
+This tool reports some basic QC measures from an Rexpression dataset. Typically, this report
+is the first thing to run on a fresh data set since you'll learn a lot whether it's raw affybatch or normalised
+eset. Useful during preprocessing and always a good idea to double check the QC reports at the end of preprocessing.
+
+It relies and depends on an  eclectic set of BioConductor packages that prepare QC reports
+such as AffyQC and ArrayQualityMetrics downloaded from http://bioconductor.org
+The author claims not to be in the least confused by facts so suggestions for
+improvement from those who are would be most welcome.
+
+Originally designed and written for the Rexpression BioC/Galaxy tools by ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

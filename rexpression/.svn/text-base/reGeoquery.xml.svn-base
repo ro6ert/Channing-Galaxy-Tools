@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<tool id="reGeoquery" name="Get GEO data:" force_history_refresh="True">
+<description>
+for a GDS id
+</description>
+<code file="reMakeNew_code.py"/> 
+<command interpreter="python">
+reGeoquery.py '$gid'  '$title' '$htmlout' '$htmlout.files_path' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R'
+
+</command>
+ 	
+<inputs>
+    <param name="title" label="Title -> job output names" type="text" size="80" value="GEO data" />
+    <param name="gid" type="text" label="GEO ID number - eg GDS10" value='GDS10'
+     help="Currently this tool only works successfully GDS files from Geo - watch this space for others" />
+    <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+</inputs>
+
+<outputs>  
+    <data format='html' name="htmlout" />
+</outputs>
+<options refresh='True' />
+
+<help>
+
+**Syntax**
+
+- **Title** is used to name the output files so make it meaningful
+- **GEO GID** is restricted to GDS file types. 
+- **GIDS** can be found at GEO http://www.ncbi.nlm.nih.gov/geo
+
+-----
+
+**Summary**
+
+This tool imports expression experiments from the NIH GEO repository into your Galaxy history in formats 
+other Rexpression tools for clustering and normalization can use as inputs. It currently produces the contents
+of a GEO GDS as an ExpressionSet and as an MAlist for other tools.
+
+It relies and depends on the BioConductor package GEOquery at http://bioconductor.org/packages/2.2/bioc/html/GEOquery.html
+and in particular implements one of the GEO data sets illustrated in the package vignette. 
+
+Originally designed and written for the Rexpression BioC/Galaxy tools by ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

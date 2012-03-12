@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<tool id="reNorm" name="Normalize">
+<description>
+Microarrays - rma,vsn..etc.
+</description>
+<code file="reMakeNew_code.py"/>
+
+<command interpreter="python">
+reNorm.py '$i.extra_files_path/$i.metadata.base_name' '$title' '$methodtypes' '$outhtml' '$outhtml.files_path' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R'
+</command>
+ 	
+<inputs>
+    <param name="title" label="Title to label normalised output files" type="text" size="80" 
+    value="Normalization/Summarization" />
+    <param name="i" type="data" format="affybatch,malist" 
+    label="AffyBatch or MAList microarray expression data set chosen from your history" optional="false"
+    size="120" help="Choose a raw expression data file from your current history" />          
+    <param name="methodtypes" label="Normalisation method(s) to apply - you may choose more than one" type="select" multiple="true">
+    <option value="rma" selected="True">rma</option>
+    <option value="mas5">mas5</option>
+    <option value="gcrma">gcrma</option>
+    <option value="plier">plier (with BioC default settings)</option>
+    <option value="liwong">dChip like (Li and Wong based) </option>
+    </param>
+    <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+
+ 
+</inputs>
+
+    <outputs>  
+    <data format='html' name="outhtml"/>
+</outputs>
+
+<help>
+
+
+**Syntax**
+
+- **Title** is used to name the output files - so make it meaningful
+- **History data file** is any Rexpression file with raw data (eg an affybatch) in your history 
+
+
+-----
+
+**Summary**
+
+This tool uses R/BioC packages to summarise the raw data from an expression
+experiment and to normalise it, producing a new Rexpression expressionSet (eset) dataset. 
+Any number of the 5 different methods can be used, and each will produce a new eSet in
+your history (use "refresh" to see them after the job is completed). If in doubt, use rma.
+
+If you choose the plier method, the tool may appear to have failed, however, it may have run
+correctly and produced the output files you requested - this is an internal R issue in which
+R writes to stderr (despite being told not to!) which Galaxy interprets wrongly as a sign of failure
+Typically, this is done on raw (eg cel files as affbatch) data to try to minimise the effects of 
+technical sources of variation 
+before further analysis. It is a good idea to review the transformed data with the QC tool.
+
+Note that this tool uses ideas documented at
+http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/R_BioCondManual.html#biocon_affypack
+and available along with a vast array of other, well maintained software at 
+http://bioconductor.org 
+Users should feel free to cite the web address of this tool, 
+and as many of the other responsible contributers as will fit, since your results
+depend on the work of a very large number of other people. 
+It was designed and written for the Rexpression BioC/Galaxy tools by 
+ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented at http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

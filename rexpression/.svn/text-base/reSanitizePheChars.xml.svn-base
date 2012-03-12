@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<tool id="reSanitizePheChars001" name="Clean nasty metacharacters:">
+<description>
+from messy phenotype data
+</description>
+<code file="reSanitizePheChars_code.py"/> 
+<command interpreter="python">
+reSanitizePheChars.py '$i.extra_files_path' '$title' '$outhtml' '$outhtml.files_path' 
+ '$i.metadata.base_name' '$i.ext' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R'
+</command>
+ 	
+<inputs>
+    <param name="title" label="Title -> job output names" type="text" size="80" value="PhenoSanity" />
+        <param name="i" type="data" format="affybatch,eset,malist" 
+                label="Expression data set chosen from your history" optional="false"
+                size="5"  />  
+    <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+</inputs>
+
+    <outputs>  
+    <data format='eset' name="outhtml" />
+</outputs>
+
+
+<help>
+
+
+**Syntax**
+
+- **Title** is used to name the output files - it helps to make it meaningful
+- **Expression Data** is an Rexpression datatype from your current history 
+
+-----
+
+**Summary**
+
+This tool removes certain non-alphabetic metacharacters like commas and colons which can
+cause consternation in some BioConductor and other tools, because they confuse simple parsers
+looking for commas or colons put there by the program
+
+It will produce a new expression dataset but all metacharacters will be purged. Note that our ArrayExpress
+and GEOquery based tools already take care of this - but if you experience breakage with parameters in processing
+an expression set obtained from elsewhere, this tool might save your day.
+
+Originally designed and written for the Rexpression BioC/Galaxy tools by ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

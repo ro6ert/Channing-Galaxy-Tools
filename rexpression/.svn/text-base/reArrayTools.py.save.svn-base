@@ -1,0 +1,355 @@
+""" 
+reArrayTools.py from
+reAffyExpress.py
+A Galaxy tool based on the simplest dichotomous example in AffyExpress
+documentation I could find. Use this as a prototype to write more
+complex models.
+This code called by the job runner, parameters as shown in the corresponding
+xml tool descriptor.
+
+From ?regress
+
+regress             package:AffyExpress             R Documentation
+
+Run regression to fit genewise linear model
+
+Description:
+
+     Fit genewise linear model using LIMMA package, ordinary linear
+     regression,  or permutation method.
+
+Usage:
+
+     regress(object, design, contrast, method, adj="none", permute.time=1000) 
+
+Arguments:
+
+  object: an "ExpressionSet"
+
+  design: design matrix from the make.design function
+
+contrast: contrast matrix from the make.contrast function
+
+  method: Three methods are supported by this function: "L" for using
+          LIMMA method - compute moderated t-statistics and log-odds 
+          of differential expression by empirical Bayes shrinkage of
+          the standard  errors towards a common value,   "F" for using
+          ordinary linear regression,  "P" for permuation test by
+          resampling the phenotype
+
+     adj: adjustment method for multiple comparison test, including
+          "holm",  "hochberg", "hommel", "bonferroni", "BH", "BY",
+          "fdr", "none".  The default value is "none". Type
+          help(p.adjust) for more detail.
+
+permute.time: number of permutation times, only used for the
+          permutation  method.
+
+:
+Value:
+
+     A dataframe contains rows for all the genes from object and the
+     following columns: ID(probeid); Log2Ratio (estimate of the effect
+     or the contrast,  on the log2 scale);  F (F statistics); P.Value
+     (raw p-value); adj.P.Value (adjusted  p-value or q-value)
+
+Author(s):
+
+     Xiwei Wu xwu@coh.org, Xuejun Arthur Li xueli@coh.org
+
+References:
+
+     Smyth, G.K. (2005) Limma: linear models for microarray data. In:
+     Bioinformatics and Computational Biology Solutions using R and 
+     Bioconductor, R. Gentleman,  V. Carey, S. Dudoit, R. Irizarry,  W.
+     Huber (eds.), Springer, New York, pages 397-420
+
+Examples:
+
+     data(testData)
+     normaldata<-pre.process("rma",testData)
+
+     ## Create design matrix
+     design<-make.design(pData(normaldata), "group")
+
+     ## Create contrast matrix - Compare group "A" vs. "C"
+     contrast<-make.contrast(design, "A", "C")
+
+     ## Identify differentially expressed gene by using LIMMA method
+     result<-regress(normaldata, design, contrast, "L")
+
+
+ AffyQA(parameters = c("estrogen", "time.h"), raw = raw)
+
+  result.wrapper <- AffyRegress(normal.data = filtered, cov = "estrogen",
++     compare1 = "present", compare2 = "absent", method = "L",
++     adj = "fdr", p.value = 0.05, m.value = log2(1.5))
+
+ target<-data.frame(drug=(c(rep("A",4),rep("B",4),rep("C",4))), 
+     gender=factor(c(rep("M",6),rep("F",6))), 
+     group=factor(rep(c(1,2,3),4)))
+
+     # Example1:  Compare drug "A" vs. "B"
+     design1<-make.design(target, "drug")
+     contrast1<-make.contrast(design1, "A", "B")
+
+     # Example2:  Compare drug "A" vs. "B", adjusting for "group" variable
+     design2<-make.design(target, c("drug","group"))
+     contrast2<-make.contrast(design2, "A", "B")
+
+     # Example3:  Suppose you are interested in "drug", "group" interaction
+     design3<-make.design(target, c("drug","group"), int=c(1,2))
+     contrast3<-make.contrast(design3, interaction=TRUE)
+
+     # Example4:  Compare drug "A" vs. "B" among "male"
+     # Notice that you must use an design matrix containing an interaction term
+     design4<-make.design(target, c("drug","gender"), int=c(1,2))
+     contrast4<-make.contrast(design4, "A", "B", "M")
+
+    
+"""
+import  sys, string, os, tempfile, shutil, time, subprocess
+ 
+
+mng = '### makenewgalaxy' # used by exec_after_process hook to parse out new file paths/names
+
+galhtmlprefix = """<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Galaxy %s tool output - see http://galaxyproject.org/" />
+<title></title>
+<link rel="stylesheet" href="/static/style/base.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+"""
+
+galhtmlpostfix = """</div></body></html>"""
+# eg
+# library(AffyExpress)
+# load( "Golub_Merge.eset")
+
+#  reFunc('test.log', "Golub_Merge.eset" , "golub", '.','eset','rma','Gender','F','M','L','fdr','0.001','1.5','test.html',0)
+#  reFunc('test.log', "ETABM25.affyBatch" , "etabm25", '.','eset','rma','FactorValue..Age.','<40','>40','L','fdr','0.001','1.5','test.html',0)
+
+
+
+reFunc="""reFunc <- function(infpath,infname,tDir,inftype,norm_method,phename,pheval1,
+pheval2,meth,padj,pthresh,mthresh,outhtmlName,permutations)
+{
+library("AffyExpress")
+library("affy")
+sessionInfo()
+x = load(infpath)
+eset = get(x)
+eset = na.omit(eset) # remove all NA's or things fail
+phe = pData(eset)
+setwd(tDir)
+
+if (inftype == 'affybatch')
+    {
+        # this makes AffyQA.html and some low res png's 
+        # TODO MAKE PDF's or better resolution so the labels are legible for complex data
+        AffyQA(parameters = phename, raw = eset)
+        outfiles = c(outfiles,'AffyQA')
+        outlabs = c(outlabs,paste('Output from AffyQA run on',phename))
+        normaldata <- pre.process(method = norm_method, raw = eset)
+        eset <- normaldata
+        eset = na.omit(eset0
+    }
+## Create design matrix
+cat(paste('Phenotype chosen =',phename,'\n'))
+design<-new("designMatrix",phename)
+cat(paste('design for',phename,'=',\n'))
+design
+## Create contrast matrix - Compare group "A" vs. "C"
+contrast<-new("contrastMatrix",design.matrix=design,compare1=pheval1,
+compare2=pheval2) # should be the list of values
+cat(paste('contrast for',phename,':',pheval1,'vs',pheval2,'=\n'))
+contrast
+# method should be one of “limma”, “regression”, “permutation”
+## Identify differentially expressed gene by using LIMMA method
+if (meth == 'P')
+    {
+    res<-regress(eset, contrast, method=meth, adj=padj, 
+    permute.time=permutations)
+    }
+else
+    {
+    res<-regress(eset, contrast, method=meth, adj=padj)
+    }  
+    select <- selectSigGene(top.table = res, p.value = pthresh,m.value = log2(mthresh))
+    if (sum(select,rm.na=T)==0) print("No significant result is generated")
+    else{
+        fullresult<-cbind(getID(select), getLog2Ratio(select), getAdjPVal(select))
+        sort(fullresult, sorted.by="ID")
+        gN <- as.character(result$ID)
+        aaf.handler()
+        anncols <- aaf.handler()[c(1:3, 7, 8)]
+        probeid <- gN[good]
+        anntable <- aafTableAnn(probeid, cdf.name, anncols)
+        testtable <- aafTable( "Log2 ratio"=fullresult[,2][good],
+        "P.Value"=fullresult[,3][good])
+        table<-merge(anntable, testtable)
+        saveHTML(table, paste(filename,"html", sep="."), title="Target Genes")
+
+#result2html(cdf.name = annotation(eset), result = select,filename = outhtmlName)  
+
+}
+reFunc('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s',%s)
+"""
+## prepare script
+## R = reFunc % (infpath,infname,outpath,inftype,'rma', phename,phevals[0].strip(),phevals[1].strip(),
+## meth,padj,pthresh,mthresh,outhtmlname,permutations)
+
+debug = False # useful for debugging RRun()
+
+def timenow():
+    """return current time as a string
+    """
+    return time.strftime('%d/%m/%Y %H:%M:%S', time.localtime(time.time()))
+
+
+
+def whereis(program):
+    for path in os.environ.get('PATH', '').split(':'):
+        if os.path.exists(os.path.join(path, program)) and \
+           not os.path.isdir(os.path.join(path, program)):
+            return os.path.join(path, program)
+    return None
+
+
+def RRun(rcmd=[],outdir='.',title='myR'):
+    """
+    run an r script, lines in rcmd,
+    in a temporary directory
+    move everything, r script and all back to outdir which will be an html file
+
+    
+      # test
+      RRun(rcmd=['print("hello cruel world")','q()'],title='test')    
+    """
+    rlog = []
+    rexe = whereis('R')
+    assert os.path.isfile(rexe) 
+    rname = '%s.R' % title
+    stoname = '%s.R.log' % title 
+    rfname = os.path.join(outdir,rname)
+    try:
+        os.makedirs(outdir) # might not be there yet...
+    except:
+        pass
+    f = open(rfname,'w')
+    if type(rcmd) == type([]):
+        f.write('\n'.join(rcmd))
+    else:
+        f.write(rcmd) # assume is string already
+    f.write('\n')
+    f.close()
+    stofname = os.path.join(outdir,stoname)
+    sto = file(stofname,'w')
+    vcl = [rexe,"--vanilla --slave", '<', rfname ]
+    x = subprocess.Popen(' '.join(vcl),shell=True,stderr=sto,stdout=sto,cwd=outdir)
+    retval = x.wait()
+    sto.close()
+    rlog = file(stofname,'r').readlines()
+    flist = os.listdir(outdir)
+    flist.sort
+    flist = [(x,x) for x in flist] 
+    for i,x in enumerate(flist):
+        if x == rname:
+            flist[i] = (x,'R script for %s' % title)
+        elif x == stoname:
+            flist[i] = (x,'R log for %s' % title)        
+    return rlog,flist # for html layout
+            
+ 
+
+def main():
+    """called as
+    <command interpreter="python">
+    reArrayTools.py '$i.extra_files_path' '$title' '$outhtml' '$i.metadata.base_name' 
+    '$i.extension' '$phename'
+    '$method' '$permutations' '$padj' '$pthresh' '$mthresh'  '$outhtml.extra_files_path' '$phevals'
+    </command>
+    """
+    sep = ','
+    nparm = 13
+    appname = sys.argv[0]
+    if (len(sys.argv) < nparm):
+        print '%s needs %d parameters - given %d as %s' % (appname,nparm,len(sys.argv),';'.join(sys.argv))
+        sys.exit(1)
+        # short command line error
+    appname = sys.argv[0]
+    infp = sys.argv[1].strip()
+    title = sys.argv[2].strip()
+    outhtml = sys.argv[3].strip() 
+    infbasename = sys.argv[4].strip()
+    inftype = sys.argv[5].strip()
+    infpath = os.path.join(infp,'%s.%s' % (infbasename,inftype)) # build extension
+    phevals = sys.argv[13].strip().split(sep) # columns for design/contrast
+    phename = sys.argv[6].strip() # first is name
+    meth = sys.argv[7].strip() # L,F or P
+    permutations = sys.argv[8].strip()
+    try:
+        p = int(permutations)
+    except:
+        permutations = '0'
+    padj = sys.argv[9].strip() # fdr etc
+    pthresh = sys.argv[10].strip()
+    mthresh = sys.argv[11].strip()
+    try:
+        p = float(pthresh)
+    except: 
+        pthresh = '1.0' # all
+    try:
+        m = float(mthresh)
+    except:
+        mthresh = '0.0' # all
+    outpath = sys.argv[12].strip() 
+    try:
+        os.makedirs(outpath)
+    except:
+        pass
+    norm_method='rma'    
+    replace = string.whitespace + string.punctuation
+    ttab = string.maketrans(replace,'_'*len(replace))
+    title = string.translate(title,ttab)
+    ourlog = []
+    ourlog.append('# %s - part of the Rexpression Galaxy toolkit http://esphealth.org/trac/rgalaxy\n' % (appname))
+    ourlog.append('# Job %s Got parameters %s\n' % (title,' '.join(sys.argv)))
+    if len(phevals) <> 2: #
+        ourlog.append('### WARNING - phevals must have exactly 2 phenotype values to contrast - supplied with %d in %s' % (len(phevals),phevals) ) 
+    try:
+        os.makedirs(outpath) # not made yet?
+        ourlog.append('### html file path %s made\n' % outpath)
+    except:
+        ourlog.append('### html file path %s already exists\n' % outpath)
+    outhtmlname = 'Dichotomous_%s_%s' % (phename,infbasename)
+    R = reFunc % (infpath,infbasename,
+    outpath,inftype,'rma', phename,phevals[0].strip(),phevals[1].strip(),meth,padj,pthresh,mthresh,outhtmlname,permutations)
+    rlog,flist = RRun(rcmd = R,outdir = outpath,title=title)
+    ourlog.append('R code follows:\n%s\n' % R)
+    s = ' '.join(('Top table is for',infbasename,'phenotype=',phename,'contrast=',phevals[0],'vs',phevals[1],'method=',meth,
+        'pthresh=',pthresh,'foldthresh=',mthresh,'adjustment=',padj))
+    ourlog.append('## R log:\n')
+    ourlog += rlog
+    html = []
+    html.append(galhtmlprefix)
+    html.append('<h2>Output from job title %s run at %s</h2><ol>' % (title,timenow()))
+    fl = os.listdir(outpath)
+    fl.sort()
+    for f in fl: 
+        html.append('<li><a href="%s">%s</a></li>' % (f,f))
+    html.append('</ol>')
+    html.append('<hr><h2>Job log:</h2><hr><pre>%s</pre><hr><h5>Tool was %s</h5>' % ('\n'.join(ourlog),appname)) # show log
+    html.append(galhtmlpostfix)
+    outf = file(outhtml,'w')
+    outf.write('\n'.join(html))
+    outf.close()
+
+if __name__ == "__main__":
+    main()
+

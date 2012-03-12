@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<tool id="reArraySubset" name="Subset Expression experiments">
+<description>with BioConductor simpleaffy</description>
+<code file="reMakeNew_code.py"/> 
+<command interpreter="python">
+reArraySubset.py '$i.extra_files_path' '$title' '$outhtml' '$outhtml.files_path'
+ '$i.metadata.base_name' '$phename' '$phevals' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R'
+</command>
+<inputs>
+    <page>
+        <param name="title" label="Title to label job output names" type="text" size="80" 
+           value="Subset" />
+        <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+        <param name="i" type="data" format="affybatch,eset,malist" 
+                label="Expression data set chosen from your history" optional="false"
+                size="5"  />  
+    </page>
+    <page>
+        <param name="phename"  type="select" display="radio" 
+        label="Choose a phenodata column for selecting arrays for your subset" 
+        dynamic_options="get_phecols(i)"  /> 
+    </page>
+    <page>
+        <param name="phevals"  type="select" display="checkboxes" 
+        label="Choose values for the selected phenodata column for the new subset"
+        multiple="true" dynamic_options="get_phevals(i,phename)" /> 
+    </page>
+</inputs>
+
+<outputs>  
+    <data format='html' name="outhtml" />
+</outputs>
+
+ 
+
+<help>
+
+
+**Syntax**
+
+- **Title** is used to name the output files - so make it meaningful
+- **History data file** is any Rexpression file with raw data (eg an affybatch) in your history 
+
+
+-----
+
+**Summary**
+
+This tool uses BioC's Simpleaffy to compare two groups of arrays from an experiment. It takes 
+either eSet or AffyBatch objects as input - use the History datatype changer to select the ones you want, then
+choose one of those files as the input file from your current history.
+
+You can choose one of the phenotype categories to analyse differences on - choose one that has two levels. Note that only
+columns from the phenodata that have more than one value, but less values than there are chips will be displayed, and the
+count of each distinct value will be shown after the column name.
+
+Note that this tool uses ideas documented at
+http://faculty.ucr.edu/~tgirke/Documents/R_BioCond/R_BioCondManual.html#biocon_affypack
+and available along with a vast array of other, well maintained software at 
+http://bioconductor.org 
+Users should feel free to cite the web address of this tool, 
+and as many of the other responsible contributers as will fit, since your results
+depend on the work of a very large number of other people. 
+It was designed and written for the Rexpression BioC/Galaxy tools by 
+ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented at http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

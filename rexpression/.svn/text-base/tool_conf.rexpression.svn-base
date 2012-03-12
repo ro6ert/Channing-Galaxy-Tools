@@ -1,0 +1,13 @@
+ <section name="Re Data" id="reExp1">
+    <tool file="rexpression/reGeoquery.xml"/>
+    <tool file="rexpression/reArrayExpress.xml"/>
+    <tool file="rexpression/reAffyExpress.xml"/>
+    <!--tool file="rexpression/reArraySubset.xml"/-->
+  </section>
+ <section name="Re Norm/QC" id="reNQC1">
+    <tool file="rexpression/reNorm.xml" />
+    <tool file="rexpression/reQC.xml" />
+  </section>
+ <section name="Re Model" id="reModel1">
+    <tool file="rexpression/reAffyExpress.xml"/>
+  </section>

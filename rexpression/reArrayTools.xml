@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<tool id="reArrayTools001" name="One way anova:">
+<description>on Expression levels </description>
+<code file="reArrayTools_code.py"/> 
+<command interpreter="python">
+reArrayTools.py '$i.extra_files_path' '$title' '$outhtml' '$i.metadata.base_name' 
+ '$i.extension' '$phename' '$method' '$permutations' '$padj' '$pthresh' '$mthresh'
+ '$outhtml.files_path' "$phevals" '${GALAXY_DATA_INDEX_DIR}/rg/bin/R' 
+</command>
+<inputs>
+    <page>
+        <param name="title" label="Title to label job output names" type="text" size="80" 
+           value="One Way Expression Anova" />
+        <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+        <param name="i" type="data" format="affybatch,eset,malist" 
+                label="Expression data set chosen from your history" optional="false"
+                size="5"  />  
+    </page>
+    <page>
+        <param name="phename"  type="select" display="radio" 
+        label="Choose a phenodata phenotype column for the DESIGN matrix - note that only 2 values can be contrasted" 
+        dynamic_options="get_phecols(i)"  /> 
+    </page>
+    <page>
+        <param name="phevals"  type="select"
+        label="Choose EXACTLY 2 values for the selected phenodata column for the CONTRAST matrix"
+        multiple="true" dynamic_options="get_phevals(i,phename)" />
+        <param name="method" label="Regression method" type="select">
+        <option value="limma" selected="True">Limma (moderated t-statistics and log-odds 
+          of differential expression by empirical Bayes shrinkage)</option>
+        <option value="regression">Ordinary least-squares regression</option>
+        <option value="permutation">Permutation by phenotype resampling</option>
+        </param>
+        <param name="permutations" label="Number of permutations if using permutation method"
+        type="integer" value="1000" />
+        <param name="padj" label="Type II error control method" type="select"
+        help='Control either family wise error or false discovery rate using routines from R p.adjust'>
+        <option value="fdr" selected="True">False discovery rate</option>
+        <option value="BY">Benjamini-Yukateli FDR</option>
+        <option value="BH">Benjamini-Hochberg FDR</option>
+        <option value="holm">Holm FWE control</option>
+        <option value="hochberg">Hochberg FWE control</option>
+        <option value="bonferroni">Bonferroni FWE control (Overconservative - expression data correlated)</option>
+        <option value="none">None (NOT recommended!)</option>
+        </param>
+        <param name="pthresh" label="Maximum P-value threshold to report (1.0 to report all)"
+        type="float" value="0.05" />
+        <param name="mthresh" label="Minimum fold-change value threshold to report"
+        type="float" value="1.5" />
+    </page>
+</inputs>
+
+<outputs>  
+    <data format='html' name="outhtml" />
+</outputs>
+
+<help>
+
+
+**Syntax**
+
+- **Title** is used to name the output files - so make it meaningful
+- **History data file** is any Rexpression file in your history 
+- **Method** LIMMA method - compute moderated t-statistics and log-odds of differential expression by empirical Bayes shrinkage ofthe standard  errors towards a common value, using ordinary linea regression, permuation test by resampling the phenotype
+- **Permutations** Number of permutations - ignored unless using permutation method
+- **Type II error control** Use fdr or one of the specific methods from the R stats p.adjust function
+- **P threshold** Sets the adjusted p value below which genes will be reported in the output "top table"
+- **Fold-change threshold** Sets the fold change (it will be log2 transformed) above which genes will be reported in the output "top table"
+
+-----
+
+**Summary**
+
+This tool uses BioConductor's AffyExpress package to report QC and analysis according to
+the phenotype dichotomous factor you choose. It will generate (and show you) the design and
+contrast matrices, and an html report showing all genes that pass the filtering criteria you set will be
+provided - the top table. If you provide an affybatch as the input, the AffyExpress QC reports
+will also be generated comparing chips according to the phenotype and the data will be
+normalised and summarized using rma before analysis.
+
+This tool implements the AffyExpress vignette shown below:
+
+::
+
+    5    Identifying Differentially Expressed Genes
+
+      Identifying differentially expressed genes depends on a researcher's interest and
+    applying correct statistical models during the analysis process. We will illustrate
+    a few basic statistical models on this data set.
+
+     5.1     Single Factor
+    Suppose we would like to identify how differentially expressed genes respond to
+    estrogen regardless of time period. Analysis on a single categorical variable is the
+    same as One Way ANOVA. Since we only have two levels, present and absent,
+    for the estrogen variable, this type of analysis is also equivalent to a two-sample
+    t test.
+
+     5.1.1    Design Matrix and Contrast Matrix
+
+       To run the analysis, we need to create a design and a contrast matrix. One of the
+    major strengths of this package that we can use the built-in function to create the
+    design matrix and the contrast matrix using standard statistics approaches which
+    is different from the design matrix from the LIMMA package. To create a design
+    matrix, we will use the make.design function.
+    > design = make.design(target = pData(filtered), cov = "estrogen")
+    > design
+       (Intercept) estrogen/present
+    1              1                    0
+    2              1                    0
+    3              1                    1
+    4              1                    1
+    5              1                    0
+    6              1                    0
+    7              1                    1
+                                             3
+    8               1                   1
+    attr(,"assign")
+    [1] 0 1
+    attr(,"contrasts")
+    attr(,"contrasts")$estrogen
+    [1] "contr.treatment"
+    Notice that the name of the second column of the design matrix is estrogen/present,
+    where estrogen is the name of the variable and present tells us that present
+    corresponds to 1. Thus, the design matrix above is equvalent to the equation
+    below:
+                                     y = alpha + betaE xE +                                (1)
+    where
+                                     1 if estrogen = present
+                            xE =
+                                     0 if estrogen = absent
+        Next we need to create a contrast matrix. Since we are comparing present
+    versus absent, we will create the following contrast:
+    > contrast = make.contrast(design.matrix = design, compare1 = "present",
+    +       compare2 = "absent")
+    > contrast
+           [,1]
+    [1,]      0
+    [2,]      1
+    5.1.2    Analysis
+    Once the design matrix and contrast matrix are created, we can run the analysis
+    by using the regress function. There are three types of regression methods that
+    are being supported: LIMMA (computing moderated t-statistics and log-odds of
+    differential expressions by empirical Bayes shrinkage of the standard errors towards
+    a common value), permutation test (resampling the phenotype), and ordinary
+    linear regression. Also, we can apply multiple comparison corrections by using the
+    adj option, such as fdr. The default value for the adj is none
+    > result = regress(object = filtered, design = design, contrast = contrast,
+    +       method = "L", adj = "fdr")
+    Here are the first three genes of the result
+    > result[1:3, ]
+                         ID Log2Ratio.1              F    P.Value adj.P.Val
+    1000_at         1000_at -0.23625810 2.9566239 0.1195380 0.4969571
+    1001_at         1001_at 0.12495314 1.0542776 0.3312475 0.7979252
+    1003_s_at 1003_s_at 0.06103375 0.2581607 0.6235681 0.9536450
+                                              4
+        For the next step, we can select differentaly expressed genes based on p value
+    and/or fold change. Suppose that we would like to select genes with a p value
+    LT 0.05 and a fold change value greater than 1.5.
+    > select = select.sig.gene(top.table = result, p.value = 0.05,
+    +       m.value = log2(1.5))
+    [1] "There are 381 differentially expressed genes"
+    [1] "based on your selection criteria."
+    The select.sig.gene function adds an additional column, significant, which
+    gives a value of either TRUE or FALSE indicating whether the gene is differen-
+    tially expressed based on your selection criteria. In this example, there are 381
+    differentially expressed genes being selected.
+    5.1.3    Output Your Result
+    To output the differentially expressed genes along with annotations to an HTML
+    file in your current working directory, we can use the result2html function.
+    > result2html(cdf.name = annotation(filtered), result = select,
+    +       filename = "singleFactor")
+    5.1.4    A Wrapper Function
+    There is a wrapper function, AffyRegress, that can acomplish all of the above
+    steps together including: create a design and contrast matrix, run regression, select
+    differentaly expressed genes, and output the differentally expressed gene to an html
+    file.
+    > result.wrapper = AffyRegress(normal.data = filtered, cov = "estrogen",
+    +       compare1 = "present", compare2 = "absent", method = "L",
+    +       adj = "fdr", p.value = 0.05, m.value = log2(1.5))
+    [1] "There are 381 differentially expressed genes"
+    [1] "based on your selection criteria."
+
+Users should feel free to cite the web address of this tool, 
+and as many of the other responsible contributers as will fit, since your results
+depend on the work of a very large number of other people. 
+It was designed and written for the Rexpression BioC/Galaxy tools by 
+ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented at http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

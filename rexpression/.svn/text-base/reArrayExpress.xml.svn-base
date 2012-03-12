@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<tool id="reArray001" name="Get ArrayExpress data:" force_history_refresh="True">
+<description>use an ArrayExpress id
+</description>
+<code file="reMakeNew_code.py"/> 
+<command interpreter="python">
+reArrayExpress.py '$AEid'  '$title' '$htmlfile' '$htmlfile.files_path' '${GALAXY_DATA_INDEX_DIR}/rg/bin/R'
+</command>
+ 	
+<inputs>
+    <param name="title" label="Title -> job output names" type="text" size="80" value="ArrayExpress data" />
+    <param name="AEid" type="text" label="Array Express ID - eg E-GEOD-7540" value=''
+    help="A valid http://www.ebi.ac.uk/microarray-as/aer/entry Express id is required" />
+    <param label="Genome" name="dbkey" type="select" dynamic_options="get_available_builds('hg18')" />
+</inputs>
+
+    <outputs>  
+    <data format='html' name="htmlfile" />
+</outputs>
+
+
+<help>
+
+
+**Syntax**
+
+- **Title** is used to name the output files - it helps to make it meaningful
+- **Array Express ID** is a valid id from Array Express. 
+- **Valid IDs** can be found at http://www.ebi.ac.uk/microarray-as/ae/browse.html
+
+-----
+
+**Summary**
+
+This tool imports expression experiments from the EBI Array Express repository into your Galaxy history 
+in formats other Rexpression tools for clustering and normalization can use as inputs. It currently produces 
+the contents as an ExpressionSet and as an MAlist for other tools.
+
+It relies and depends on the BioConductor package ArrayExpress which is currently only
+available in the developer SVN at http://bioconductor.org
+
+Originally designed and written for the Rexpression BioC/Galaxy tools by ross lazarus (ross d0t lazarus at gmail d0t com) August 2008
+Copyright Ross Lazarus 2008
+Licensed under the LGPL as documented http://www.gnu.org/licenses/lgpl.html
+
+
+</help>
+</tool>

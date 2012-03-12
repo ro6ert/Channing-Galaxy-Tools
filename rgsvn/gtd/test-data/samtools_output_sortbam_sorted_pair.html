@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Galaxy rgSortBam.py tool output - see http://g2.trac.bx.psu.edu/" />
+<title></title>
+<link rel="stylesheet" href="/static/style/base.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+<h3><a href="http://rgenetics.org">Rgenetics</a> tool rgSortBam.py run at 10/11/2010 15:33:02</h3>
+<b>Your job produced the following outputs - check here for a record of what was done and any unexpected events</b><hr/>
+<b>Output files.</b><hr/>
+
+<table>
+
+<tr><td><a href="tmpo4rrytrgTempFixMate_20101109204715.log">tmpo4rrytrgTempFixMate_20101109204715.log  (733 B)</a></td></tr>
+
+<tr><td><a href="picard_input_hg18.trimmed.fasta">picard_input_hg18.trimmed.fasta  (1009.3 KB)</a></td></tr>
+
+<tr><td><a href="tmpNR_oQzrgSortBamRun.log">tmpNR_oQzrgSortBamRun.log  (87 B)</a></td></tr>
+
+<tr><td><a href="tmpEi4EmKrgSortBamRun.log">tmpEi4EmKrgSortBamRun.log  (46 B)</a></td></tr>
+
+<tr><td><a href="tmpCBke4rrgSortBamRun.log">tmpCBke4rrgSortBamRun.log  (121 B)</a></td></tr>
+
+<tr><td><a href="tmpvnthwergSortBamRun.log">tmpvnthwergSortBamRun.log  (314 B)</a></td></tr>
+
+<tr><td><a href="tmpvEva0TrgSortBamRun.log">tmpvEva0TrgSortBamRun.log  (161 B)</a></td></tr>
+
+<tr><td><a href="tmptG369wrgSortBamRun.log">tmptG369wrgSortBamRun.log  (407 B)</a></td></tr>
+
+<tr><td><a href="tmpXecUg4rgSortBamRun.log">tmpXecUg4rgSortBamRun.log  (107 B)</a></td></tr>
+
+<tr><td><a href="tmpFJikQArgfakeFasta.fasta.fai">tmpFJikQArgfakeFasta.fasta.fai  (45 B)</a></td></tr>
+
+<tr><td><a href="tmp9S9a_lrgSortBamRun.log">tmp9S9a_lrgSortBamRun.log  (46 B)</a></td></tr>
+
+<tr><td><a href="tmpQuTXg4rgSortBamRun.log">tmpQuTXg4rgSortBamRun.log  (121 B)</a></td></tr>
+
+<tr><td><a href="tmpm0wNWprgSortBamRun.log">tmpm0wNWprgSortBamRun.log  (341 B)</a></td></tr>
+
+<tr><td><a href="tmpilwhLxrgSortBamRun.log">tmpilwhLxrgSortBamRun.log  (161 B)</a></td></tr>
+
+<tr><td><a href="tmp8JGkWUrgSortBamRun.log">tmp8JGkWUrgSortBamRun.log  (407 B)</a></td></tr>
+
+<tr><td><a href="tmpbyuRUwrgSortBamRun.log">tmpbyuRUwrgSortBamRun.log  (107 B)</a></td></tr>
+
+<tr><td><a href="tmpv-8LyZrgfakeFasta.fasta.fai">tmpv-8LyZrgfakeFasta.fasta.fai  (45 B)</a></td></tr>
+
+<tr><td><a href="tmpLA_GxtrgSortBamRun.log">tmpLA_GxtrgSortBamRun.log  (39 B)</a></td></tr>
+
+<tr><td><a href="tmpwfbrj3rgSortBamRun.log">tmpwfbrj3rgSortBamRun.log  (30 B)</a></td></tr>
+
+<tr><td><a href="tmpqzriFzrgSortBamRun.log">tmpqzriFzrgSortBamRun.log  (407 B)</a></td></tr>
+
+</table><p/>
+
+<b>Log of activity</b><hr/>
+
+
+## executing cp /share/shared/relul.galaxy/test-data/picard_input_hg18.trimmed.fasta /udd/relul/tmp/tmpv-8LyZrgfakeFasta.fasta returned status 0. Nothing appeared on stderr/stdout
+<br/>## executing samtools faidx /udd/relul/tmp/tmpv-8LyZrgfakeFasta.fasta returned status 0. Nothing appeared on stderr/stdout
+<br/>## executing samtools import /udd/relul/tmp/tmpv-8LyZrgfakeFasta.fasta.fai /share/shared/relul.galaxy/test-data/picard_input_sorted_pair.sam /udd/relul/tmp/tmpuFuXSirgSortBamnewbam.bam returned status 0 and log (stdout/stderr) records: 
+<br/>[sam_header_read2] 2 sequences loaded.
+<br/>
+<br/>## executing samtools sort /udd/relul/tmp/tmpuFuXSirgSortBamnewbam.bam /udd/relul/tmp/tmpSsgMzErgSortBamSorted returned status 0. Nothing appeared on stderr/stdout
+<br/>## executing samtools calmd -b /udd/relul/tmp/tmpSsgMzErgSortBamSorted.bam /share/shared/relul.galaxy/test-data/picard_input_hg18.trimmed.fasta > /udd/relul/tmp/tmpacC4UprgCalmdTemp.bam returned status 0 and log (stdout/stderr) records: 
+<br/>[fai_load] build FASTA index.
+<br/>
+<br/>## WARNING putting back non @SQ metadata (['@HD\tVN:1.0\tSO:queryname\n', '@RG\tID:rg1\tSM:s1\n']) from /share/shared/relul.galaxy/test-data/picard_input_sorted_pair.sam## executing samtools view -h -o /udd/relul/tmp/tmp-fQhPirgSortBamTemp.sam /udd/relul/tmp/tmpacC4UprgCalmdTemp.bam returned status 0. Nothing appeared on stderr/stdout
+<br/>## executing java -Xmx2g -jar /share/shared/relul.galaxy/tool-data/shared/jars/CleanSam.jar INPUT=/udd/relul/tmp/tmpLkuLCkrgfixheadout.sam OUTPUT=/udd/relul/tmp/tmpr7imtArgCleanSam VERBOSITY=DEBUG returned status 0 and log (stdout/stderr) records: 
+<br/>[Wed Nov 10 15:33:02 EST 2010] net.sf.picard.sam.CleanSam INPUT=/udd/relul/tmp/tmpLkuLCkrgfixheadout.sam OUTPUT=/udd/relul/tmp/tmpr7imtArgCleanSam VERBOSITY=DEBUG    TMP_DIR=/tmp/relul QUIET=false VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false
+<br/>[Wed Nov 10 15:33:02 EST 2010] net.sf.picard.sam.CleanSam done.
+<br/>Runtime.totalMemory()=9109504
+<br/>
+<br/>## executing cp /udd/relul/tmp/tmpr7imtArgCleanSam /share/shared/relul.galaxy/test-data/samtools_output_sort_sorted_pair.bam returned status 0. Nothing appeared on stderr/stdout
+
+<hr/>Note: A diabolical combination of the freely available <a href="http://picard.sourceforge.net/command-line-overview.shtml">Picard software</a> 
+
+and <a href="http://samtools.sourceforge.net">Samtools software</a>
+
+generated all outputs reported here. These third party tools were
+orchestrated by the Galaxy rgSortBam wrapper and this command line from the Galaxy form:<br/>
+/share/shared/relul.galaxy/tools/development/rgSortBam.py -i /share/shared/relul.galaxy/test-data/picard_input_sorted_pair.sam --informat sam -n Sorted -o /share/shared/relul.galaxy/test-data/samtools_output_sort_sorted_pair.bam --newformat bam --tmp_dir /export/tmp/tmpRj0FTd/database/tmp -m test-data/samtools_output_sort_sorted_pair.html -d /udd/relul/tmp/ --runcleansam true --runcalmd true -j /share/shared/relul.galaxy/tool-data/shared/jars/CleanSam.jar --fasta /share/shared/relul.galaxy/test-data/picard_input_hg18.trimmed.fasta
+</div></body></html>

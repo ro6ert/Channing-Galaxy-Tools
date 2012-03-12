@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Galaxy rgEstLibComplexity.py tool output - see http://g2.trac.bx.psu.edu/" />
+<title></title>
+<link rel="stylesheet" href="/static/style/base.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+<h3><a href="http://rgenetics.org">Rgenetics</a> tool rgEstLibComplexity.py run at 19/11/2010 13:48:01</h3>
+<b>Your job produced the following outputs - check here for a record of what was done and any unexpected events</b><hr/>
+<div><b>Output files.</b><hr/>
+
+<table>
+
+<tr><td><a href="estlibcompout.txt">estlibcompout.txt  (589 B)</a></td></tr>
+
+<tr><td><a href="rgestimatelibcomp.txt">rgestimatelibcomp.txt  (1.2 KB)</a></td></tr>
+
+</table></div>
+
+<b>Log of activity</b><hr/>
+
+
+## executing java -Xmx2g -jar /share/shared/relul.galaxy/tool-data/shared/jars/EstimateLibraryComplexity.jar I= /share/shared/relul.galaxy/database/files/000/dataset_47.dat O= estlibcompout.txt MIN_IDENTICAL_BASES=5 MAX_DIFF_RATE=0.03 MIN_MEAN_QUALITY=20 READ_NAME_REGEX="[a-zA-Z0-9]+:[0-9]:([0-9]+):([0-9]+):([0-9]+).*" OPTICAL_DUPLICATE_PIXEL_DISTANCE=100 returned status 0 and log (stdout/stderr) records: 
+<br/>[Fri Nov 19 13:48:01 EST 2010] net.sf.picard.sam.EstimateLibraryComplexity INPUT=[/share/shared/relul.galaxy/database/files/000/dataset_47.dat] OUTPUT=estlibcompout.txt MIN_IDENTICAL_BASES=5 MAX_DIFF_RATE=0.03 MIN_MEAN_QUALITY=20 READ_NAME_REGEX=[a-zA-Z0-9]+:[0-9]:([0-9]+):([0-9]+):([0-9]+).* OPTICAL_DUPLICATE_PIXEL_DISTANCE=100    TMP_DIR=/tmp/relul VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false
+<br/>INFO	2010-11-19 13:48:01	EstimateLibraryComplexity	Will store 3098916 read pairs in memory before sorting.
+<br/>INFO	2010-11-19 13:48:01	EstimateLibraryComplexity	Finished reading - moving on to scanning for duplicates.
+<br/>[Fri Nov 19 13:48:01 EST 2010] net.sf.picard.sam.EstimateLibraryComplexity done.
+<br/>Runtime.totalMemory()=33947648
+<br/>
+
+<hr/>Note: The freely available <a href="http://picard.sourceforge.net/command-line-overview.shtml">Picard software</a> 
+
+generated all outputs reported here. These third party tools were
+orchestrated by the Galaxy rgEstLibComplexity wrapper and this command line from the Galaxy form:<br/>
+/share/shared/relul.galaxy/tools/development/rgEstLibComplexity.py -i /share/shared/relul.galaxy/database/files/000/dataset_47.dat -n Library Complexity --tmp_dir /export/tmp/relul --minid 5 --maxdiff 0.03 --minmeanq 20 --readregex [a-zA-Z0-9]+:[0-9]:([0-9]+):([0-9]+):([0-9]+).* --optdupedist 100 -j /share/shared/relul.galaxy/tool-data/shared/jars/EstimateLibraryComplexity.jar -d /share/shared/relul.galaxy/database/job_working_directory/77/dataset_91_files -t /share/shared/relul.galaxy/database/files/000/dataset_91.dat
+</div></body></html>

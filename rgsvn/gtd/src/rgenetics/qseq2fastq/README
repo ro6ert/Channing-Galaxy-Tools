@@ -1,0 +1,68 @@
+Analyzing next-generation sequencing data: Convert from qseq to fastqsanger
+
+HISTORY
+
+This tool was uploaded to the community site at http://community.g2.bx.psu.edu by
+Vipin T Sreedharan as version 0.1
+
+Ross Lazarus added a simple Galaxy functional test, some additional
+documentation in the help section and changed the input data format to interval because this is 
+what the current sniffers will determine as the datatype of any uploaded qseq files if 'autodetect' is
+used (which is how most users are likely to do it!)
+
+This is likely to be added to the default distribution if there's enough interest.
+Until then, you may need to move the test files (qseq_test.*) into your tool-data directory
+so galaxy can find them, and put qseq2fastq.pl and qseq2fastq.xml somewhere in your tools - eg under
+a new directory called qseq2fastq
+
+Then, you need to tell Galaxy where the xml file is by adding a line in your local tool_conf.xml and restart so the tool
+shows up in your tool panel
+
+You'll also need to adjust tool_conf.xml.sample if you want to run the functional tests eg as:
+sh run_functional_tests -id qseq2fastq
+from your Galaxy root, which should run this tool's test only 
+if you want to make sure it's all working right.
+
+AFAIK the output is already groomed so is set to fastqsanger - but I honestly don't know if Illumina
+output files of this format are always so clean - if anyone knows, please let me (or Vipin) know
+on the galaxy-dev list so we can make that clear for the next version
+
+CONTENTS
+
+qseq2fastq.xml: Tool configuration file.
+
+qseq2fastq.pl: The file converter program written in PERL.
+
+qseq_test.txt: A small qseq file for testing -> [your galaxy root]/test-data/
+
+qseq_test.fasta: Output fastqsanger file for testing -> [your galaxy root]/test-data/
+
+LICENSE
+
+Vipin's original did not mention a license, 
+so to keep things 'simple', 
+I'll add the same license as the Galaxy distribution to all the materials provided in
+this source distribution as at October 2010 unless
+there's some objection...
+
+Copyright (c) 2005 Pennsylvania State University
+
+Permission is hereby granted, free of charge, to any person obtaining 
+a copy of this software and associated documentation files (the 
+"Software"), to deal in the Software without restriction, including 
+without limitation the rights to use, copy, modify, merge, publish, 
+distribute, sublicense, and/or sell copies of the Software, and to 
+permit persons to whom the Software is furnished to do so, subject to 
+the following conditions:
+
+The above copyright notice and this permission notice shall be 
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+

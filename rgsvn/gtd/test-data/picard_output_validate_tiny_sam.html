@@ -1,0 +1,43 @@
+<style type="text/css">
+    tr.d0 td {background-color: oldlace; color: black;}
+    tr.d1 td {background-color: aliceblue; color: black;}
+    </style><?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Galaxy rgPicardValidate.py tool output - see http://g2.trac.bx.psu.edu/" />
+<title></title>
+<link rel="stylesheet" href="/static/style/base.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+<h3><a href="http://rgenetics.org">Rgenetics</a> tool rgPicardValidate.py run at 09/11/2010 14:17:24</h3><b>Your job produced the following output files.</b><hr/>
+<table>
+<tr><td><a href="rgPicardValidate_Clean.errors">rgPicardValidate_Clean.errors</a></td></tr>
+<tr><td><a href="rgPicardValidate.out">rgPicardValidate.out</a></td></tr>
+</table><p/>
+<b>Picard output</b><hr/>
+<table cellpadding="3" >
+<tr class="d0"><td>['WARNING: Record 1, Read name both_reads_align_clip_adapter, NM tag (nucleotide differences) is missing\n']</td></tr>
+<tr class="d1"><td>['WARNING: Record 2, Read name both_reads_align_clip_adapter, NM tag (nucleotide differences) is missing\n']</td></tr>
+<tr class="d0"><td>['WARNING: Record 3, Read name both_reads_align_clip_marked, NM tag (nucleotide differences) is missing\n']</td></tr>
+<tr class="d1"><td>['WARNING: Record 4, Read name both_reads_align_clip_marked, NM tag (nucleotide differences) is missing\n']</td></tr>
+<tr class="d0"><td>['WARNING: Record 5, Read name both_reads_present_only_first_aligns, NM tag (nucleotide differences) is missing\n']</td></tr>
+<tr class="d1"><td>['WARNING: Record 7, Read name read_2_too_many_gaps, NM tag (nucleotide differences) is missing\n']</td></tr>
+<tr class="d0"><td>['WARNING: Record 8, Read name read_2_too_many_gaps, NM tag (nucleotide differences) is missing\n']</td></tr>
+</table>
+<b>Picard log</b><hr/>
+<pre>## rgPicardValidate.py about to Popen:
+"java -Xmx" "8g" " -jar " "/share/shared/relul.galaxy/tool-data/shared/jars/ValidateSamFile.jar" " O=" "/share/shared/relul.galaxy/database/job_working_directory/37/dataset_37_files/rgPicardValidate.out" " TMP_DIR=" "/tmp" " I=/share/shared/relul.galaxy/database/files/000/dataset_27.dat" " MAX_OUTPUT=100" " IGNORE=INVALID_TAG_NM"
+## got 3 rows - first few =[Tue Nov 09 14:17:24 EST 2010] net.sf.picard.sam.ValidateSamFile INPUT=/share/shared/relul.galaxy/database/files/000/dataset_27.dat OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/37/dataset_37_files/rgPicardValidate.out IGNORE=[INVALID_TAG_NM] MAX_OUTPUT=100 TMP_DIR=/tmp    MODE=VERBOSE IGNORE_WARNINGS=false IS_BISULFITE_SEQUENCED=false VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false
+
+[Tue Nov 09 14:17:24 EST 2010] net.sf.picard.sam.ValidateSamFile done.
+
+Runtime.totalMemory()=9109504
+
+</pre><hr/>The freely available <a href="http://picard.sourceforge.net/command-line-overview.shtml">Picard software</a> 
+generated all outputs reported here, using this command line:<br/>
+<pre>java -Xmx8g -jar /share/shared/relul.galaxy/tool-data/shared/jars/ValidateSamFile.jar O=/share/shared/relul.galaxy/database/job_working_directory/37/dataset_37_files/rgPicardValidate.out TMP_DIR=/tmp I=/share/shared/relul.galaxy/database/files/000/dataset_27.dat MAX_OUTPUT=100 IGNORE=INVALID_TAG_NM</pre>
+</div></body></html>
+

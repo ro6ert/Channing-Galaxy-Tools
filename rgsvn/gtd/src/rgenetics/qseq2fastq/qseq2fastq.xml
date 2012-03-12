@@ -1,0 +1,85 @@
+<tool id="qseq2fastq" name="qseq_to_fastq" version="0.1">
+	<description>Illumina HiSeq QSEQ output to FASTQ format</description>
+	<command interpreter="perl">qseq2fastq.pl  $qseq_input 	$fastq_file
+	</command>
+	<inputs>
+		<param format="interval" name="qseq_input" type="data" label="Illumina QSEQ file from your current history" 
+                 help="File in QSEQ format, see below"/>
+                <param type="text" label="Output fastqsanger file name" name="title" value="fastqsanger" size="200" 
+                help="Use this name to remind yourself where this data came from..." />
+	</inputs>
+	<outputs>
+	<data format="fastqsanger" name="fastq_file" label="${title}" />
+	</outputs>
+<tests>
+<test>
+<param name='qseq_input' value='qseq_test.txt' ftype='interval' />
+<param name='fastq_file' file='qseq_test.fasta' ftype='fastqsanger' />
+</test>
+</tests>
+
+<help>
+
+
+.. class:: infomark
+
+**What it does**
+
+This tool converts Illumina QSEQ files into Phred FASTQ files.
+
+Convert an Illumina QSEQ file into Phred FASTQ format in your Galaxy history for downstream tools that require fastq.
+Typically the output would be aligned with BWA or handled other Galaxy SRS tools.
+
+--------------
+
+**Details as simple examples**
+
+- The following data in QSEQ file format::
+	
+	HWI-EAS431	1	3	100	1792	1317	0	1	................................A...G..............A..GG....G...............	BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB	0
+
+- Will be converted to FASTQ file format::
+
+	@3:100:1792:1317:N
+	NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNANNNGNNNNNNNNNNNNNNANNGGNNNNGNNNNNNNNNNNNNNN
+	+3:100:1792:1317:N
+	############################################################################
+
+--------------
+
+.. class:: infomark
+
+**About formats**
+
+***(1) QSEQ format*** 
+
+QSEQ files are the output of the Illumina pipeline. 
+
+These files contain the sequence, corresponding qualities, as well as lane, tile and X/Y position of clusters.
+
+According to the Illumina manual qseq files have the following format:
+
+(1) Machine name: (hopefully) unique identifier of the sequencer.
+(2) Run number: (hopefully) unique number to identify the run on the sequencer.
+(3) Lane number: positive integer (currently 1-8).
+(4) Tile number: positive integer.
+(5) X: x coordinate of the spot. Integer (can be negative).
+(6) Y: y coordinate of the spot. Integer (can be negative).
+(7) Index: positive integer. No indexing should have a value of 1.
+(8) Read Number: 1 for single reads; 1 or 2 for paired ends.
+(9) Sequence
+(10) Quality: the calibrated quality string.
+(11) Filter: Did the read pass filtering? 0 - No, 1 - Yes.
+
+
+***(2) FASTQ format*** A FASTQ file normally uses four lines per sequence.
+ 
+(1) Line 1 begins with a '@' character and is followed by a sequence identifier and an optional  description (like a FASTA title line). 
+(2) Line 2 is the raw sequence letters. 
+(3) Line 3 begins with a '+' character and is optionally followed by the same sequence identifier (and any description) again. 
+(4) Line 4 encodes the quality values for the sequence in Line 2, and must contain the same number of symbols as letters in the sequence.
+	
+    
+
+</help>
+</tool>

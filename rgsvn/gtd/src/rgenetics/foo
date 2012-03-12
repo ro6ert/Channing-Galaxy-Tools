@@ -1,0 +1,932 @@
+Only in .: foo
+Only in /share/shared/galaxy/tools/rgsvn: gtd
+Only in .: picard.py
+Only in /share/shared/galaxy/tools/rgsvn: plinkbinJZ.pyc
+Only in /share/shared/galaxy/tools/rgsvn/qseq2fastq: .svn
+Only in /share/shared/galaxy/tools/rgsvn: rgBWASampe.py.nov22
+Only in /share/shared/galaxy/tools/rgsvn: rgBWASampe.xml.nov22
+diff -r ./rgEstLibComplexity.py /share/shared/galaxy/tools/rgsvn/rgEstLibComplexity.py
+19c19
+<     def __init__(self,opts=None,cl=[]):
+---
+>     def __init__(self,opts=None,cl=[],tidy=False):
+22a23
+>         self.tidy = tidy
+35c36
+<         fd,templog = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgEstLibComplexity.txt')
+---
+>         fd,templog = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgInsertSizeRun.txt')
+49c50,68
+<         self.tlog.write(s)        
+---
+>         self.tlog.write(s)
+>         
+>     def bamToSam(self,infile=None):
+>         """
+>         use samtools view to convert bam to sam
+>         """
+>         fd,tempsam = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgEstLibTemp.sam')
+>         cl = ['samtools view -h -o',tempsam,infile]
+>         self.run(cl)
+>         return tempsam
+> 
+>     def samToBam(self,infile=None):
+>         """
+>         use samtools view to convert sam to bam
+>         """
+>         fd,tempbam = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgEstLibTemp.sam')
+>         cl = ['samtools view -h -b -S -o',tempbam,infile]
+>         self.run(cl)
+>         return tempbam
+51c70
+<     def makehtml(self):
+---
+>     def estlib_makehtml(self):
+104a124,136
+>  
+>     def cleanup(self):
+>         if self.tidy:
+>             for fname in self.delme:
+>                 try:
+>                     os.unlink(fname)
+>                 except:
+>                     pass
+>         s = open(self.tlogname,'r').readlines()
+>         print >> sys.stdout, s # for info
+>         os.unlink(self.tlogname)
+> 
+>     
+116c148
+<     op.add_option('-n', '--title', default="Estimate Library Complexity")
+---
+>     op.add_option('-n', '--title', default="Insert size metrics")
+131,136c163,173
+<     if not os.path.exists(opts.tmp_dir): os.makedirs(opts.tmp_dir)
+<     if not os.path.exists(opts.outdir): os.makedirs(opts.outdir)
+< 
+<     tool = libraryComplexity(opts=opts,cl=sys.argv)
+<     tool.doLC()
+<     tool.makehtml()
+---
+>     try:
+>         os.makedirs(opts.tmp_dir)
+>     except:
+>         pass
+>     try:
+>         os.makedirs(opts.outdir)
+>     except:
+>         pass
+>     x = libraryComplexity(opts=opts,cl=sys.argv)
+>     x.doLC()
+>     x.estlib_makehtml()
+diff -r ./rgEstLibComplexity.xml /share/shared/galaxy/tools/rgsvn/rgEstLibComplexity.xml
+41,52d40
+<   <tests>
+<     <test>
+<       <param name="input_file" value="picard_input_tiny.sam" />
+<       <param name="out_prefix" value="Library Complexity" />
+<       <param name="minIDbases" value="5" />
+<       <param name="maxDiff" value="0.03" />
+<       <param name="minMeanQ" value="20" />
+<       <param name="readRegex" value="[a-zA-Z0-9]+:[0-9]:([0-9]+):([0-9]+):([0-9]+).*" />
+<       <param name="optDupeDist" value="100" />      
+<       <output name="html_file" file="picard_output_estlibcomplexity_tinysam.html" ftype="html" lines_diff="25" />
+<     </test>
+<   </tests>
+diff -r ./rgMach.py /share/shared/galaxy/tools/rgsvn/rgMach.py
+343,344c343,344
+< 	""" do this at init and before slicing
+< 	"""
+---
+>         """ do this at init and before slicing
+>         """
+Only in /share/shared/galaxy/tools/rgsvn: rgManQQ.py.orig
+Only in /share/shared/galaxy/tools/rgsvn: rgManQQ.xml.orig
+diff -r ./rgPicardASMetrics.py /share/shared/galaxy/tools/rgsvn/rgPicardASMetrics.py
+2,3d1
+< import shutil
+< import pdb
+38c36
+<     op.add_option('-d', '--output-dir', default="/tmp/AsMetrics")
+---
+>     op.add_option('-d', '--output-dir', default="/tmp/HsMetrics")
+50,58c48,51
+< 
+<     # We must be able to create the output folder.
+<     output_folder = os.path.abspath(opts.output_dir)
+<     if not os.path.exists(output_folder): os.makedirs(output_folder)
+< 
+< 
+<     # Opts.adapters needs to be one string. If it's None, it must be coerced to empty str.
+<     opts.adapters = opts.adapters or ''
+< 
+---
+>     try:
+>         os.makedirs(opts.output_dir)
+>     except:
+>         pass
+60c53
+<     tempout = os.path.join(output_folder,'rgPicardASMetrics.out')
+---
+>     tempout = os.path.join(opts.output_dir,'rgPicardASMetrics.out')
+62,71c55
+< 
+< 
+<     # Picard only accepts reference files that have a 'fasta' extension name
+<     if not opts.refseq.endswith('fasta'):
+<         new_filename = '%s.fasta' % opts.refseq
+<         destination = os.path.join(output_folder, new_filename)
+<         shutil.copy(os.path.abspath(opts.refseq), destination)
+<         opts.refseq = destination
+<                     
+< 
+---
+>     # Create output folder and save our R script in there.
+73c57
+<     cl = ['java -Xmx',opts.maxjheap,' -jar ',opts.jar,' REFERENCE_SEQUENCE=', os.path.abspath(opts.refseq),' ASSUME_SORTED=',
+---
+>     cl = ['java -Xmx',opts.maxjheap,' -jar ',opts.jar,' REFERENCE_SEQUENCE=',opts.refseq,' ASSUME_SORTED=',
+76c60
+<         ' INPUT=',os.path.abspath(opts.input),' OUTPUT=',tempout,' VALIDATION_STRINGENCY=LENIENT',' TMP_DIR=',opts.tmp_dir]
+---
+>         ' INPUT=',opts.input,' OUTPUT=',tempout,' VALIDATION_STRINGENCY=LENIENT',' TMP_DIR=',opts.tmp_dir]
+79,80d62
+< 
+< 
+82,86c64,66
+< 
+<     fixPicardOutputs(tempout=tempout, output_dir=opts.output_dir, 
+<                      log_file=opts.log_file,
+<                      html_output=os.path.join(opts.output_dir, opts.html_output),
+<                      progname=progname,cl=cl)
+---
+>     
+>     fixPicardOutputs(tempout=tempout,output_dir=opts.output_dir,log_file=opts.log_file,html_output=opts.html_output,
+>        progname=progname,cl=cl)
+diff -r ./rgPicardASMetrics.xml /share/shared/galaxy/tools/rgsvn/rgPicardASMetrics.xml
+11a12
+> 
+37c38
+<     
+---
+> 
+39c40
+< 	   falsevalue="false"/>
+---
+>     falsevalue="false"/>
+41c42
+< 	   falsevalue="false" truevalue="true" />
+---
+>     falsevalue="false" truevalue="true" />
+50,71c51,53
+<       <param name="out_prefix" value="AsMetrics" />
+<       <param name="bisulphite" value="false" />
+<       <param name="sorted" value="true" />
+<       <param name="adaptors" value="" />
+<       <param name="maxinsert" value="100000" />
+<       <param name="refGenomeSource" value="history" />
+<       <param name="ownFile" value="picard_input_hg18.trimmed.fasta" />
+<       
+<       <param name="input_file" value="picard_input_tiny.sam" />
+<       <output name="html_file" file="picard_output_alignment_summary_metrics.html" ftype="html" lines_diff="50"/>
+<     </test>
+< <test>
+<       <param name="out_prefix" value="AsMetricsIndexed" />
+<       <param name="bisulphite" value="false" />
+<       <param name="sorted" value="true" />
+<       <param name="adaptors" value="" />
+<       <param name="maxinsert" value="100000" />
+<       <param name="refGenomeSource" value="indexed" />
+<       <param name="indices" value="hg18" />
+<       
+<       <param name="input_file" value="picard_input_sorted_pair.sam" />
+<       <output name="html_file" file="picard_output_AsMetrics_indexed_hg18_sorted_pair.html" ftype="html" lines_diff="50"/>
+---
+>       <param name="input_file" value="bioconductor_shortread_in.fastq" />
+>       <param name="out_prefix" value="bioconductor_shortread_out" />
+>       <output name="html_file" file="bioconductor_shortread_out.html" ftype="html" lines_diff="100"/>
+diff -r ./rgPicardFixMate.py /share/shared/galaxy/tools/rgsvn/rgPicardFixMate.py
+1,4c1
+< import os, sys
+< import shutil, tempfile
+< import optparse
+< import string
+---
+> import os,string,sys,optparse,shutil,tempfile
+6,11c3
+< 
+< import pysam
+< 
+< from rgutils import timestamp
+< from samtools import Bam, Sam
+< 
+---
+> from rgutils import galhtmlprefix,galhtmlpostfix,galhtmlattr,timenow 
+24,35c16,33
+<     def __init__(self, opts):
+<         if not os.path.exists(opts.jar): raise ValueError, 'jar file does not exist'
+<         self.jar = opts.jar
+<         self.tmp_dir = opts.tmp_dir
+<         self.log_suffix = opts.suffix_tmpl % (timestamp(), 'log')
+<         self.maxjheap = opts.maxjheap
+<         self.output_dir = os.path.dirname(opts.output)
+<         self.runs = []
+<         self.logs = []
+<         
+<     def run(self, input_file, output_file=None):
+<         assert input_file != None
+---
+>     """
+>     classy!
+>     kind of silly to make a class here.
+>     """
+>     
+>     def __init__(self,opts=None,cl=[],tidy=True):
+>         """
+>         """
+>         self.opts = opts
+>         self.tidy = tidy
+>         self.cl = ' '.join(cl) # ready for the htmlfile output
+>         self.delme = []
+>         killme = string.punctuation + string.whitespace
+>         trantab = string.maketrans(killme,'_'*len(killme))
+>         self.title = self.opts.title.translate(trantab)
+>         fd,self.tlogname = tempfile.mkstemp(dir=self.opts.tmp_dir,suffix='rgFixMate.log')
+>         self.tlog = open(self.tlogname,'w')
+>     
+37,38c35,51
+<         log_fd, log_filename = tempfile.mkstemp(dir=opts.tmp_dir, suffix=self.log_suffix)
+<         log_file = open(log_filename, 'w')
+---
+>     def run(self,cl=None,redir=True):
+>         assert cl <> None
+>         fd,templog = tempfile.mkstemp(dir=self.opts.tmp_dir,suffix='rgSortBamRun.log')
+>         tlf = open(templog,'w')
+>         if redir:
+>            process = Popen(' '.join(cl), shell=True, stderr=tlf, stdout=tlf, cwd=self.opts.tmp_dir)
+>         else:
+>            process = Popen(' '.join(cl), shell=True, cwd=self.opts.tmp_dir)
+>         rval = process.wait()
+>         tlf.close()
+>         tlogs = ''.join(open(templog,'r').readlines())
+>         if len(tlogs) > 1:
+>             s = '## executing %s returned status %d and log (stdout/stderr) records: \n%s\n' % (' '.join(cl),rval,tlogs)
+>         else:
+>             s = '## executing %s returned status %d. Nothing appeared on stderr/stdout\n' % (' '.join(cl),rval)
+>         os.unlink(templog) # always
+>         self.tlog.write(s)
+40,50d52
+<         # When no output file is defined, Fixmate tool will replace
+<         # the content of the input file.
+<         params = {'I=':input_file}
+<         if output_file: 
+<             params['O='] = output_file
+< 
+<         cmd_string = 'java -Xmx%s -jar %s %s' % (
+<             self.maxjheap, self.jar, ' '.join([''.join(it) for it in list(params.items())])
+<             )
+<         
+<         process = Popen(cmd_string, shell=True, stderr=log_file, stdout=log_file)
+52,56c54,88
+<         return_value = process.wait()
+<         log_file.close()
+<         log_contents = open(log_filename).read()
+<         self.runs.append(cmd_string)
+<         self.logs.append(log_contents)
+---
+>     def bamToSam(self,infile=None):
+>         """
+>         use samtools view to convert bam to sam
+>         """
+>         fd,tempsam = tempfile.mkstemp(dir=self.opts.tmp_dir,suffix='rgSortBamTemp.sam')
+>         cl = ['samtools view -h -o',tempsam,infile]
+>         self.run(cl)
+>         return tempsam
+> 
+>     def samToBam(self,infile=None):
+>         """
+>         use samtools view to convert sam to bam
+>         """
+>         fd,tempbam = tempfile.mkstemp(dir=self.opts.tmp_dir,suffix='rgSortBamTemp.sam')
+>         cl = ['samtools view -h -b -S -o',tempbam,infile] 
+>         self.run(cl)
+>         return tempbam
+>     
+>     def doFix(self):
+>         """
+>         """
+>         if self.opts.newformat == 'sam':
+>             fd,fixedbam = tempfile.mkstemp(dir=self.opts.tmp_dir,suffix='rgFixMateOut') 
+>             self.delme.append(fixedbam)
+>             # note the java io tmpdir is recommended for large files - prolly harmless
+>             # see http://www.broadinstitute.org/gsa/wiki/index.php/Local_realignment_around_indels
+>             cl = ['java -Xmx%s' % self.opts.maxjheap,'-Djava.io.tmpdir=',self.opts.tmp_dir,'-jar',self.opts.jar,'I=',opts.input,'O=',fixedbam] 
+>             # stitch the adjusted headers
+>             self.run(cl)
+>             sam = self.bamToSam(fixedbam)
+>             cl = ['cp',fixedbam,self.opts.output]
+>             self.run(cl)
+>         else:
+>             cl = ['java -Xmx%s' % self.opts.maxjheap,'-jar',self.opts.jar,'I=',opts.input,'O=',self.opts.output] 
+>             self.run(cl)
+58c90,102
+<         shutil.move(log_filename, os.path.join(self.output_dir, os.path.basename(log_filename)))
+---
+>           
+>  
+>     def cleanUp(self):
+>         if self.tidy:
+>             for fname in self.delme:
+>                 try:
+>                     os.unlink(fname)
+>                 except:
+>                     pass
+>         self.tlog.close()
+>         s = open(self.tlogname,'r').readlines()
+>         print >> sys.stdout, s # for info
+>         os.unlink(self.tlogname)
+60c104
+<         
+---
+>     
+64,65c108,109
+<     rgPicardFixMate.py -i "$input_file" -o "$out_file" --tmp_dir "${__new_file_path__}"  
+<     --newformat "$newformat" -j "${GALAXY_DATA_INDEX_DIR}/shared/jars/FixMateInformation.jar"
+---
+>    rgPicardFixMate.py -i "$input_file" -n "$out_prefix" -o "$out_file" --tmp_dir "${__new_file_path__}"  
+>    -n "$newformat" -j "${GALAXY_DATA_INDEX_DIR}/shared/jars/FixMateInformation.jar"
+69d112
+<     op.add_option('-j','--jar')
+71d113
+<     op.add_option('--input-type', default=None)
+72a115
+>     op.add_option('-n', '--title', default="SortSamBam")
+76,78c119
+<     op.add_option('-n', '--title', default='')
+<     op.add_option('-v','--verbose', action='store_true')
+< 
+---
+>     op.add_option('-j','--jar',default='')
+83,87c124,130
+< 
+<     if not os.path.exists(opts.tmp_dir): os.makedirs(opts.tmp_dir)
+< 
+<     suffix_tmpl = 'rgTempFixMate_%s.%s'
+<     opts.suffix_tmpl = suffix_tmpl
+---
+>     try:
+>         os.makedirs(opts.tmp_dir)
+>     except:
+>         pass
+>     fm = fixMate(opts=opts)
+>     fm.doFix()
+>     fm.cleanUp()
+89,109d131
+<     # Picard tools always produces bam files. Naming accordingly...
+<     ifd, intermediate_filename = tempfile.mkstemp(suffix=suffix_tmpl % (timestamp(), 'bam'),
+<                                                   dir=opts.tmp_dir)
+< 
+<     fm = fixMate(opts)
+<     fm.run(os.path.abspath(opts.input), output_file=intermediate_filename)
+< 
+<     if opts.verbose:
+<         for run, log in zip(fm.runs, fm.logs):
+<             print 'Call to \n%s\n produced the following output:\n%s' % (run, log)
+< 
+<     intermediate = Bam(intermediate_filename)
+< 
+<     # Picard tool produced intermediate bam file. Depending on the
+<     # desired format, we either just move to final location or create
+<     # a sam version of it.
+<     if opts.newformat == 'sam':
+<         sam_file = intermediate.to_sam(os.path.abspath(opts.output))
+<         os.unlink(intermediate_filename)
+<     else:
+<         shutil.move(intermediate_filename, os.path.abspath(opts.output))
+diff -r ./rgPicardFixMate.xml /share/shared/galaxy/tools/rgsvn/rgPicardFixMate.xml
+4,5c4,5
+<    rgPicardFixMate.py -i "$input_file" -o "$out_file" --tmp_dir "${__new_file_path__}" -n "$out_prefix" 
+<    --newformat "$newformat" -j "${GALAXY_DATA_INDEX_DIR}/shared/jars/FixMateInformation.jar"
+---
+>    rgPicardFixMate.py -i "$input_file" -n "$out_prefix" -o "$out_file" --tmp_dir "${__new_file_path__}"  
+>    -n "$newformat" -j "${GALAXY_DATA_INDEX_DIR}/shared/jars/FixMateInformation.jar"
+32,43c32,34
+<       <param name="input_file" value="picard_input_sorted_pair.sam" />
+<       <param name="sortOrder" value="query" />
+<       <param name="newformat" value="bam" />
+<       <param name="out_prefix" value="Test FixMate" />
+<       <output name="out_file" file="picard_output_fixmate_sorted_pair.bam" ftype="bam" />
+<     </test>
+<     <test>
+<       <param name="input_file" value="picard_input_sorted_pair.sam" />
+<       <param name="sortOrder" value="query" />
+<       <param name="newformat" value="sam" />
+<       <param name="out_prefix" value="Test FixMate" />
+<       <output name="out_file" file="picard_output_fixmate_sorted_pair.sam" ftype="sam" />
+---
+>       <param name="input_file" value="bioconductor_shortread_in.fastq" />
+>       <param name="out_prefix" value="bioconductor_shortread_out" />
+>       <output name="html_file" file="bioconductor_shortread_out.html" ftype="html" lines_diff="100"/>
+diff -r ./rgPicardGCBiasMetrics.py /share/shared/galaxy/tools/rgsvn/rgPicardGCBiasMetrics.py
+46,58c46,49
+< 
+<     # We must be able to create the output folder.
+<     output_folder = os.path.abspath(opts.output_dir)
+<     if not os.path.exists(output_folder): os.makedirs(output_folder)
+< 
+< 
+<     # Picard only accepts reference files that have a 'fasta' extension name
+<     if not opts.refseq.endswith('fasta'):
+<         new_filename = '%s.fasta' % opts.refseq
+<         destination = os.path.join(output_folder, new_filename)
+<         shutil.copy(os.path.abspath(opts.refseq), destination)
+<         opts.refseq = destination
+< 
+---
+>     try:
+>         os.makedirs(opts.output_dir)
+>     except:
+>         pass
+60,63c51,54
+<     tempout = os.path.join(output_folder,'rgPicardGCBiasMetrics.out')
+<     temppdf = os.path.join(output_folder,'rgPicardGCBiasMetrics.pdf')
+<     temptab = os.path.join(output_folder,'rgPicardGCBiasMetrics.xls')
+<     opts.log_file = opts.log or os.path.join(output_folder, '%s.log' % title)
+---
+>     tempout = os.path.join(opts.output_dir,'rgPicardGCBiasMetrics.out')
+>     temppdf = os.path.join(opts.output_dir,'rgPicardGCBiasMetrics.pdf')
+>     temptab = os.path.join(opts.output_dir,'rgPicardGCBiasMetrics.xls')
+>     opts.log_file = opts.log or os.path.join(opts.output_dir, '%s.log' % title)
+69c60,63
+<     process = Popen(''.join(cl), shell=True, stderr=standard_fd, stdout=standard_fd, cwd=output_folder)
+---
+>     process = Popen(''.join(cl), shell=True, stderr=standard_fd, stdout=standard_fd, cwd=opts.output_dir)
+>     return_value = process.wait()
+>     cl = 'mogrify -format jpg -resize x500 %s' % (temppdf) # make the jpg for fixPicardOutputs to find
+>     process = Popen(cl, shell=True, stderr=standard_fd, stdout=standard_fd, cwd=opts.output_dir)
+72,78c66,67
+< 
+<     fixPicardOutputs(tempout=temptab, 
+<                      output_dir=output_folder,
+<                      log_file=opts.log_file,
+<                      html_output=os.path.join(output_folder, opts.html_output),
+<                      progname=progname,
+<                      cl=cl)
+---
+>     fixPicardOutputs(tempout=temptab,output_dir=opts.output_dir,
+>       log_file=opts.log_file,html_output=opts.html_output,progname=progname,cl=cl)
+diff -r ./rgPicardGCBiasMetrics.xml /share/shared/galaxy/tools/rgsvn/rgPicardGCBiasMetrics.xml
+48,54c48,50
+<       <param name="out_prefix" value="CollectGCBias" />
+<       <param name="windowsize" value="100" />
+<       <param name="mingenomefrac" value="0.00001" />
+<       <param name="refGenomeSource" value="history" />
+<       <param name="ownFile" value="picard_input_hg18.trimmed.fasta" />      
+<       <param name="input_file" value="picard_input_summary_alignment_stats.sam" />
+<       <output name="html_file" file="picard_output_GcBias_uploaded_hg18_summary_alignment_stats.html" ftype="html" lines_diff="50"/>
+---
+>       <param name="input_file" value="bioconductor_shortread_in.fastq" />
+>       <param name="out_prefix" value="bioconductor_shortread_out" />
+>       <output name="html_file" file="bioconductor_shortread_out.html" ftype="html" lines_diff="100"/>
+diff -r ./rgPicardHsMetrics.py /share/shared/galaxy/tools/rgsvn/rgPicardHsMetrics.py
+15,21d14
+< usage_msg = """
+< python rgPicardHsMetrics.py -i $input_file -d $html_file.files_path -o $html_file
+<     -b $bait_bed -t $target_bed -n "$out_prefix" --tmp_dir "${__new_file_path__}"
+<     -j ${GALAXY_DATA_INDEX_DIR}/shared/jars/CalculateHsMetrics.jar  
+< """
+< 
+< 
+37,39c30,32
+<     op = optparse.OptionParser(usage=usage_msg)
+<     op.add_option('-i', '--input')
+<     op.add_option('-o', '--html-output')
+---
+>     op = optparse.OptionParser()
+>     op.add_option('-i', '--input', default=None)
+>     op.add_option('-o', '--html-output', default=None)
+41,42c34,35
+<     op.add_option('-b', '--bait')
+<     op.add_option('-t', '--target')
+---
+>     op.add_option('-b', '--bait', default='')
+>     op.add_option('-t', '--target', default='')
+44c37
+<     op.add_option('-l', '--log', default='')
+---
+>     op.add_option('-l', '--log', default=None)
+49,57d41
+< 
+<     has_inputs = opts.input and opts.bait and opts.target
+<     has_outputs = opts.html_output and opts.output_dir
+<     
+<     if not (has_inputs and has_outputs):
+<         print usage_msg
+<         sys.exit(-1)
+< 
+< 
+65,67c49
+< 
+<     bedToPicInterval(opts.bait, baitf)
+< 
+---
+>     bedToPicInterval(opts.bait,baitf)
+71c53
+<         bedToPicInterval(opts.target, targetf)   
+---
+>         bedToPicInterval(opts.target,targetf)   
+74,75c56
+< 
+< 
+---
+>     # Create output folder and save our R script in there.
+77,83c58,59
+< 
+<     cl = ['java -Xmx',opts.maxjheap,' -jar ',opts.jar,
+<           ' BAIT_INTERVALS=',baitf,' TARGET_INTERVALS=',
+<           targetf,' INPUT=',os.path.abspath(opts.input),
+<           ' OUTPUT=',tempout,
+<           ' VALIDATION_STRINGENCY=LENIENT', ' TMP_DIR=',opts.tmp_dir
+<           ]
+---
+>     cl = ['java -Xmx',opts.maxjheap,' -jar ',opts.jar,' BAIT_INTERVALS=',baitf,' TARGET_INTERVALS=',
+>         targetf,' INPUT=',opts.input,' OUTPUT=',tempout,' VALIDATION_STRINGENCY=LENIENT', ' TMP_DIR=',opts.tmp_dir]
+87,92c63,64
+< 
+<     fixPicardOutputs(tempout=tempout, output_dir=opts.output_dir, 
+<                      log_file=opts.log_file,
+<                      html_output=os.path.join(opts.output_dir, opts.html_output),
+<                      progname=progname,
+<                      cl=cl)
+---
+>     fixPicardOutputs(tempout=tempout,output_dir=opts.output_dir,log_file=opts.log_file,
+>       html_output=opts.html_output,progname=progname,cl=cl)
+diff -r ./rgPicardHsMetrics.xml /share/shared/galaxy/tools/rgsvn/rgPicardHsMetrics.xml
+7c7
+<     -j ${GALAXY_DATA_INDEX_DIR}/shared/jars/CalculateHsMetrics.jar
+---
+>     -j ${GALAXY_DATA_INDEX_DIR}/shared/jars/CalculateHsMetrics.jar 
+21,25c21,24
+<       <param name="out_prefix" value="HSMetrics" />
+<       <param name="input_file" value="picard_input_summary_alignment_stats.sam" ftype="sam" />
+<       <param name="bait_bed" value="picard_input_bait.bed" />
+<       <param name="target_bed" value="picard_input_bait.bed"  />
+<       <output name="html_file" file="picard_output_hs_transposed_summary_alignment_stats.html" ftype="html" lines_diff="25"/>
+---
+>       <param name="input_file" value="picard/input_summary_alignment_stats.sam" />
+>       <param name="bait_bed" value="picard/input_bait_interval.interval_list" />
+>       <param name="target_bed" value="picard/input_bait_interval.interval_list" />
+>       <output name="html_file" file="picard/output_hs_transposed_summary_alignment_stats.html" ftype="html" lines_diff="20"/>
+diff -r ./rgPicardInsertSize.xml /share/shared/galaxy/tools/rgsvn/rgPicardInsertSize.xml
+26,35c26
+<   <tests>
+<     <test>
+<       <param name="input_file" value="picard_input_tiny.sam" />
+<       <param name="out_prefix" value="Insertion size metrics" />
+<       <param name="tailLimit" value="10000" />
+<       <param name="histWidth" value="0" />
+<       <param name="minPct" value="0.01" />
+<       <output name="html_file" file="picard_output_insertsize_tinysam.html" ftype="html" lines_diff="25" />
+<     </test>
+<   </tests>
+---
+> 
+diff -r ./rgPicardMarkDups.py /share/shared/galaxy/tools/rgsvn/rgPicardMarkDups.py
+1,4c1
+< import os, sys
+< import string
+< import optparse
+< 
+---
+> import os,string,sys,optparse,shutil,tempfile 
+6,8c3
+< 
+< 
+< from picard import PicardTool
+---
+> from rgutils import galhtmlprefix,galhtmlpostfix,galhtmlattr,timenow, getFileString 
+19,24c14,21
+< class markDups(PicardTool):
+< 
+<     WRAPPER_BASENAME = 'rgPicardMarkDups'
+<    
+< 
+<     def __init__(self, opts=None, cl=[], tidy=False):
+---
+> class markDups():
+>     """
+>     classy!
+>     """
+>     
+>     def __init__(self,opts=None,cl=[],tidy=False):
+>         """
+>         """
+35,38d31
+< 
+<         program = os.path.abspath(cl[0])
+<         self.tool_folder = os.path.dirname(program)
+<         self.program_name = os.path.basename(program)
+39a33,68
+> 
+>     def run(self,cl=None,redir=True):
+>         assert cl <> None
+>         fd,templog = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgPicardMarkDups.txt')
+>         tlf = open(templog,'w')
+>         if redir:
+>            process = Popen(' '.join(cl), shell=True, stderr=tlf, stdout=tlf, cwd=self.opts.outdir)
+>         else:
+>            process = Popen(' '.join(cl), shell=True, cwd=self.opts.outdir)
+>         rval = process.wait()
+>         tlf.close()
+>         tlogs = ''.join(open(templog,'r').readlines())
+>         if len(tlogs) > 1:
+>             s = '## executing %s returned status %d and log (stdout/stderr) records: \n%s\n' % (' '.join(cl),rval,tlogs)
+>         else:
+>             s = '## executing %s returned status %d. Nothing appeared on stderr/stdout\n' % (' '.join(cl),rval)
+>         os.unlink(templog) # always
+>         self.tlog.write(s)
+>         
+>     def bamToSam(self,infile=None):
+>         """
+>         use samtools view to convert bam to sam
+>         """
+>         fd,tempsam = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgPicardMarkDups.sam')
+>         cl = ['samtools view -h -o',tempsam,infile]
+>         self.run(cl)
+>         return tempsam
+> 
+>     def samToBam(self,infile=None):
+>         """
+>         use samtools view to convert sam to bam
+>         """
+>         fd,tempbam = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgPicardMarkDups.sam')
+>         cl = ['samtools view -h -b -S -o',tempbam,infile]
+>         self.run(cl)
+>         return tempbam
+41c70,106
+<     def run_tool(self):
+---
+>     def md_makehtml(self):
+>         """
+>         write the report as html
+>         """
+>         logdat = open(self.tlogname,'r').readlines()
+>         res = []
+>         res.append(galhtmlprefix % progname)
+>         res.append(galhtmlattr % (progname,timenow()))
+>         res.append('<b>Your job produced the following outputs - check here for a record of what was done and any unexpected events</b><hr/>')
+>         try:
+>             flist = os.listdir(self.opts.outdir)
+>         except:
+>             flist = []
+>         if len(flist) > 0: # show what's left
+>             flist = [x for x in flist if not (x.startswith('.') or x == 'None')]
+>             tlist = [(os.path.getmtime(os.path.join(self.opts.outdir,x)),x) for x in flist]
+>             tlist.sort()
+>             flist = [x[1] for x in tlist]
+>             res.append('<div><b>Output files.</b><hr/>\n')
+>             res.append('<table>\n')
+>             for i,f in enumerate(flist):
+>                 fn = os.path.split(f)[-1]
+>                 fs = getFileString(fn,self.opts.outdir)
+>                 res.append('<tr><td><a href="%s">%s</a></td></tr>\n' % (fn,fs))
+>             res.append('</table></div>\n')
+>         res.append('<b>Log of activity</b><hr/>\n')
+>         res.append('\n%s' % '<br/>'.join(logdat))
+>         res.append('<hr/>Note: The freely available <a href="http://picard.sourceforge.net/command-line-overview.shtml">Picard software</a> \n')
+>         res.append('generated all outputs reported here. These third party tools were')
+>         res.append('orchestrated by the Galaxy rgEstLibComplexity wrapper and this command line from the Galaxy form:<br/>\n%s' % (self.cl))
+>         res.append(galhtmlpostfix)
+>         f = open(self.opts.htmlout,'w')
+>         f.write('\n'.join(res))
+>         f.close()
+>   
+>         
+>     def doMD(self):
+45,48c110,111
+<         cl = ['java -Xmx%s' % self.opts.maxjheap,'-jar', self.opts.jar, 
+<               'I=', self.opts.input, 'O=',self.opts.outbam,
+<               'M=', os.path.abspath(os.path.join(self.opts.outdir, self.metricstxt))
+<               ]
+---
+>         cl = ['java -Xmx%s' % self.opts.maxjheap,'-jar',self.opts.jar,'I=',self.opts.input,
+>            'O=',self.opts.outbam,'M=',self.metricstxt]
+61c124,133
+<     
+---
+>     def cleanup(self):
+>         if self.tidy:
+>             for fname in self.delme:
+>                 try:
+>                     os.unlink(fname)
+>                 except:
+>                     pass
+>         s = open(self.tlogname,'r').readlines()
+>         print >> sys.stdout, s # for info
+>         os.unlink(self.tlogname)
+95,101c167,178
+<     if not os.path.exists(opts.tmp_dir): os.makedirs(opts.tmp_dir)
+<     if not os.path.exists(opts.outdir): os.makedirs(opts.outdir)
+< 
+<     tool = markDups(opts=opts,cl=sys.argv)
+<     tool.run_tool()
+<     tool.write_html_report()
+<     tool.cleanup()
+---
+>     try:
+>         os.makedirs(opts.tmp_dir)
+>     except:
+>         pass
+>     try:
+>         os.makedirs(opts.outdir)
+>     except:
+>         pass
+>     x = markDups(opts=opts,cl=sys.argv)
+>     x.doMD()
+>     x.md_makehtml()
+>     x.cleanup()
+diff -r ./rgPicardMarkDups.xml /share/shared/galaxy/tools/rgsvn/rgPicardMarkDups.xml
+40,51d39
+<   <tests>
+<     <test>
+<       <param name="input_file" value="picard_input_sorted_pair.sam" />
+<       <param name="out_prefix" value="Dupes Marked" />
+<       <param name="remDups" value="false" />
+<       <param name="assumeSorted" value="true" />
+<       <param name="readRegex" value="[a-zA-Z0-9]+:[0-9]:([0-9]+):([0-9]+):([0-9]+).*" />
+<       <param name="optDupeDist" value="100" />      
+<       <output name="html_file" file="picard_output_markdups_sortedpairsam.html" ftype="html" lines_diff="75" />
+<     </test>
+<   </tests>
+<   
+diff -r ./rgPicardValidate.py /share/shared/galaxy/tools/rgsvn/rgPicardValidate.py
+1,5c1
+< import os, sys
+< import shutil, tempfile
+< import optparse
+< import string
+< from subprocess import Popen
+---
+> import os,string,sys,optparse,shutil,pysam,tempfile
+7c3
+< import pysam
+---
+> from subprocess import Popen
+9c5
+< from rgutils import fixPicardOutputs
+---
+> from rgutils import galhtmlprefix,galhtmlpostfix,galhtmlattr,timenow,fixPicardOutputs
+diff -r ./rgPicardValidate.xml /share/shared/galaxy/tools/rgsvn/rgPicardValidate.xml
+2,17c2
+<   <description>using Picard</description>
+<   <command interpreter="python">
+<     rgPicardValidate.py -i "$input_file" --datatype "$input_file.ext" -d "$html_file.files_path" -o "$html_file"
+<     -t "$out_prefix" -e "$ignore" -b "$bisulphite" -m "$maxerrors" -y "$new_format"
+<     -j ${GALAXY_DATA_INDEX_DIR}/shared/jars/ValidateSamFile.jar
+< #if $genomeSource.refGenomeSource == "history":
+<     -r "$genomeSource.ownFile"
+< #elif $genomeSource.refGenomeSource=="indexed":
+<     -r "$genomeSource.indices"
+< #end if
+< #if $new_format=='sam':
+<  --sam "$out_file"
+< #elif $new_format=='bam':
+<  --bam "$out_file"
+< #end if
+<   </command>
+---
+>   <description>(Picard)</description>
+114,122c99,101
+<       <param name="out_prefix" value="Clean" />
+<       <param name="bisulphite" value="false" />
+<       <param name="ignore" value="INVALID_TAG_NM" />
+<       <param name="maxerrors" value="100" />
+<       <param name="refGenomeSource" value="indexed" />
+<       <param name="indices" value="hg18" />
+<       <param name="new_format" value="dryrun" />
+<       <param name="input_file" value="picard_input_tiny.sam" ftype="sam" />
+<       <output name="html_file" file="picard_output_validate_tiny_sam.html" ftype="html" lines_diff="30"/>
+---
+>       <param name="input_file" value="bioconductor_shortread_in.fastq" />
+>       <param name="out_prefix" value="bioconductor_shortread_out" />
+>       <output name="html_file" file="bioconductor_shortread_out.html" ftype="html" lines_diff="100"/>
+146c125,129
+< This Galaxy tool uses Picard to report measures of GC bias.
+---
+> This Galaxy tool uses Picard to report any invalid reads
+> Optionally, the tool will remove the offending reads - this may fix your problem but
+> might also bias your data badly so please be careful with this option.
+> It's always better to fix the errors upstream.
+> 
+diff -r ./rgSortBam.py /share/shared/galaxy/tools/rgsvn/rgSortBam.py
+58c58
+<         """
+---
+>         """ turns out samtools seems to keep the needed ones
+157,161d156
+<         ehead = self.getSamExtraHeaders(tempsam=tempsam)
+<         # maybe we do not need to do this? we ended up with multiple @RG?
+<         ehead = []
+<         if len(ehead) == 0:
+<             self.tlog.write('## ehead is empty on %s' % tempsam)
+180,209c175,184
+<         if len(ehead) > 0: # eesh - need to view and add the additional non SQ metadata headers back again
+<             self.tlog.write('## WARNING putting back non @SQ metadata (%s) from %s' % (ehead,self.opts.input))
+<             fd,newsamout = tempfile.mkstemp(dir=self.opts.outdir,suffix='rgfixheadout.sam')
+<             self.delme.append(newsamout)
+<             tempsam = self.bamToSam(infile=sortedbam)
+<             self.delme.append(tempsam)
+<             f = open(newsamout,'w') # keep repaired file here
+<             f.write(''.join(ehead))
+<             for row in open(tempsam,'r').readlines():
+<                 f.write(row)
+<             f.close()
+<             # fixed stuff is in newsamout
+<             if self.opts.runcleansam == "true":
+<                 newsamout=self.runCleanSam(infile=newsamout,isSam=True,outBam=makeBam) # since we have a sam, do it now
+<             else:
+<                 if makeBam:
+<                     newsamout=self.samToBam(infile=newsamout)
+<             cl = ['cp',newsamout,self.opts.output]
+<             self.run(cl)                
+<         else: 
+<             if self.opts.runcleansam == "true":
+<                 newout=self.runCleanSam(infile=sortedbam,isSam=False,outBam=makeBam) 
+<                 # newout is whatever we need format
+<             else:
+<                 newout = sortedbam # may not need to do much
+<                 if not makeBam:
+<                     newout = self.bamToSam(infile=sortedbam)
+<             cl = ['cp',newout,self.opts.output]
+<             self.run(cl)
+<             self.delme.append(newout)
+---
+>         if self.opts.runcleansam == "true":
+>             newout=self.runCleanSam(infile=sortedbam,isSam=False,outBam=makeBam) 
+>             # newout is whatever we need format
+>         else:
+>             newout = sortedbam # may not need to do much
+>             if not makeBam:
+>                 newout = self.bamToSam(infile=sortedbam)
+>         cl = ['cp',newout,self.opts.output]
+>         self.run(cl)
+>         self.delme.append(newout)
+diff -r ./rgSortBam.xml /share/shared/galaxy/tools/rgsvn/rgSortBam.xml
+58d57
+< 
+60,83c59,61
+<       <param name="out_prefix" value="Sorted" />
+<       <param name="newformat" value="sam" />
+<       <param name="runCalmd" value="true" />
+<       <param name="runCleanSam" value="true" />
+<       <param name="refGenomeSource" value="history" />
+<       <param name="indexsrc" value="picard_input_hg18.trimmed.fasta" />
+<       
+<       <param name="input_file" value="picard_input_sorted_pair.sam" />
+<       <output name="out_file" file="samtools_output_sort_sorted_pair.sam" />
+<       <output name="html_file" file="samtools_output_sortsam_sorted_pair.html" ftype="html" lines_diff="125" />
+< 
+<     </test>
+<     <test>
+<       <param name="out_prefix" value="Sorted" />
+<       <param name="newformat" value="bam" />
+<       <param name="runCalmd" value="true" />
+<       <param name="runCleanSam" value="true" />
+<       <param name="refGenomeSource" value="history" />
+<       <param name="indexsrc" value="picard_input_hg18.trimmed.fasta" />
+< 
+<       <param name="input_file" value="picard_input_sorted_pair.sam" />
+<       <output name="out_file" file="samtools_output_sort_sorted_pair.bam" />
+<       <output name="html_file" file="samtools_output_sortbam_sorted_pair.html" ftype="html" lines_diff="125" />
+< 
+---
+>       <param name="input_file" value="bioconductor_shortread_in.fastq" />
+>       <param name="out_prefix" value="bioconductor_shortread_out" />
+>       <output name="html_file" file="bioconductor_shortread_out.html" ftype="html" lines_diff="100"/>
+85d62
+<   
+diff -r ./rgutils.py /share/shared/galaxy/tools/rgsvn/rgutils.py
+8d7
+< import datetime
+34,36d32
+< def timestamp():
+<     return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+< 
+49c45
+< def getFileString(fpath, outpath):
+---
+> def getFileString(fpath,outpath):
+54c50,51
+<     fp = os.path.join(outpath, fpath)
+---
+>     fp = os.path.join(outpath,fpath)
+>     s = 'no file'
+63c60
+<         s = '%s %s' % (fpath, size) 
+---
+>         s = '%s %s' % (fpath,size) 
+Only in /share/shared/galaxy/tools/rgsvn: rgutils.pyc
+Only in /share/shared/galaxy/tools/rgsvn: rgutils.py.orig
+Only in .: samtools.py
+Only in /share/shared/galaxy/tools/rgsvn: .svn
+Only in .: templates

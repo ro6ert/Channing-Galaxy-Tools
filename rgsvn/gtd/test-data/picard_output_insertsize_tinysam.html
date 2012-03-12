@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Galaxy rgPicardInsertSize.py tool output - see http://g2.trac.bx.psu.edu/" />
+<title></title>
+<link rel="stylesheet" href="/static/style/base.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+<h3><a href="http://rgenetics.org">Rgenetics</a> tool rgPicardInsertSize.py run at 19/11/2010 11:42:14</h3>
+<b>Your job produced the following outputs - check here for a record of what was done and any unexpected events</b><hr/>
+<table cellpadding="10"><tr><td>
+
+<a href="InsertSizeHist.pdf"><img src="InsertSizeHist.jpg" alt="InsertSizeHist.jpg" hspace="10" align="middle"></a>
+
+</tr><td></table>
+
+<div><b>Output files.</b><hr/>
+
+<table>
+
+<tr><td><a href="InsertSizeHist.pdf">InsertSizeHist.pdf  (5.8 KB)</a></td></tr>
+
+<tr><td><a href="InsertSizeOut.txt">InsertSizeOut.txt  (1.0 KB)</a></td></tr>
+
+<tr><td><a href="InsertSizeHist.jpg">InsertSizeHist.jpg  (12.1 KB)</a></td></tr>
+
+<tr><td><a href="rgInsertSizeMetrics.txt">rgInsertSizeMetrics.txt  (1.2 KB)</a></td></tr>
+
+</table></div>
+
+<b>Log of activity</b><hr/>
+
+
+## executing java -Xmx2g -jar /share/shared/relul.galaxy/tool-data/shared/jars/CollectInsertSizeMetrics.jar I= /share/shared/relul.galaxy/database/files/000/dataset_47.dat O= InsertSizeOut.txt HISTOGRAM_FILE= InsertSizeHist.pdf TAIL_LIMIT=10000 MINIMUM_PCT=0.01 returned status 0 and log (stdout/stderr) records: 
+<br/>[Fri Nov 19 11:42:13 EST 2010] net.sf.picard.analysis.CollectInsertSizeMetrics INPUT=/share/shared/relul.galaxy/database/files/000/dataset_47.dat OUTPUT=InsertSizeOut.txt HISTOGRAM_FILE=InsertSizeHist.pdf TAIL_LIMIT=10000 MINIMUM_PCT=0.01    STOP_AFTER=0 TMP_DIR=/tmp/relul VERBOSITY=INFO QUIET=false VALIDATION_STRINGENCY=STRICT COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false
+<br/>INFO	2010-11-19 11:42:13	ProcessExecutor	[1] "FR = red"  "RF = blue"
+<br/>INFO	2010-11-19 11:42:13	ProcessExecutor	null device 
+<br/>INFO	2010-11-19 11:42:13	ProcessExecutor	          1 
+<br/>[Fri Nov 19 11:42:13 EST 2010] net.sf.picard.analysis.CollectInsertSizeMetrics done.
+<br/>Runtime.totalMemory()=9109504
+<br/>
+<br/>## executing mogrify -format jpg -resize x400 /share/shared/relul.galaxy/database/job_working_directory/75/dataset_89_files/InsertSizeHist.pdf returned status 0. Nothing appeared on stderr/stdout
+
+<hr/>Note: The freely available <a href="http://picard.sourceforge.net/command-line-overview.shtml">Picard software</a> 
+
+generated all outputs reported here. These third party tools were
+orchestrated by the Galaxy rgInsertSize wrapper and this command line from the Galaxy form:<br/>
+/share/shared/relul.galaxy/tools/development/rgPicardInsertSize.py -i /share/shared/relul.galaxy/database/files/000/dataset_47.dat -n Insertion size metrics --tmp_dir /export/tmp/relul -l 10000 -w 0 -p 0.01 -j /share/shared/relul.galaxy/tool-data/shared/jars/CollectInsertSizeMetrics.jar -d /share/shared/relul.galaxy/database/job_working_directory/75/dataset_89_files -t /share/shared/relul.galaxy/database/files/000/dataset_89.dat
+</div></body></html>

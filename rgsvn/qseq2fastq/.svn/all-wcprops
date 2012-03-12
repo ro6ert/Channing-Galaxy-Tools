@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/rgalaxy/!svn/ver/2509/trunk/tools/rgenetics/qseq2fastq
+END
+qseq2fastq.pl
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/rgalaxy/!svn/ver/2457/trunk/tools/rgenetics/qseq2fastq/qseq2fastq.pl
+END
+qseq_test.fasta
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/rgalaxy/!svn/ver/2459/trunk/tools/rgenetics/qseq2fastq/qseq_test.fasta
+END
+qseq_test.txt
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/rgalaxy/!svn/ver/2459/trunk/tools/rgenetics/qseq2fastq/qseq_test.txt
+END
+qseq2fastq.xml
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/rgalaxy/!svn/ver/2509/trunk/tools/rgenetics/qseq2fastq/qseq2fastq.xml
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/rgalaxy/!svn/ver/2466/trunk/tools/rgenetics/qseq2fastq/README
+END

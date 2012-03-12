@@ -1,0 +1,48 @@
+<style type="text/css">
+    tr.d0 td {background-color: oldlace; color: black;}
+    tr.d1 td {background-color: aliceblue; color: black;}
+    </style><?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Galaxy rgPicardGCBiasMetrics.py tool output - see http://g2.trac.bx.psu.edu/" />
+<title></title>
+<link rel="stylesheet" href="/static/style/base.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+<h3><a href="http://rgenetics.org">Rgenetics</a> tool rgPicardGCBiasMetrics.py run at 04/11/2010 17:24:18</h3><b>Your job produced the following output files.</b><hr/>
+<table>
+<tr><td><a href="rgPicardGCBiasMetrics.xls">rgPicardGCBiasMetrics.xls</a></td></tr>
+<tr><td><a href="rgPicardGCBiasMetrics.out">rgPicardGCBiasMetrics.out</a></td></tr>
+<tr><td><a href="Short_Read_GC_Bias_Metrics.log">Short_Read_GC_Bias_Metrics.log</a></td></tr>
+<tr><td><a href="rgPicardGCBiasMetrics.pdf">rgPicardGCBiasMetrics.pdf</a></td></tr>
+</table><p/>
+<b>Picard output (transposed for readability)</b><hr/>
+<table cellpadding="3" >
+<tr class="d0"><td>## net.sf.picard.metrics.StringHeader</td></tr><tr class="d1"><td># net.sf.picard.analysis.CollectGcBiasMetrics REFERENCE_SEQUENCE=/share/shared/relul.galaxy/database/files/000/dataset_3.dat.fasta INPUT=/share/shared/relul.galaxy/database/files/000/dataset_18.dat OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.out CHART_OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.pdf SUMMARY_OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.xls WINDOW_SIZE=100 MINIMUM_GENOME_FRACTION=1.0E-5 TMP_DIR=/export/tmp/relul VALIDATION_STRINGENCY=LENIENT    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false</td></tr><tr class="d0"><td>## net.sf.picard.metrics.StringHeader</td></tr><tr class="d1"><td># Started on: Thu Nov 04 17:24:17 EDT 2010</td></tr><tr class="d0"><td>## METRICS CLASS	net.sf.picard.analysis.GcBiasSummaryMetrics</td></tr><tr class="d1"><td>WINDOW_SIZE</td><td>100</td></tr>
+<tr class="d0"><td>TOTAL_CLUSTERS</td><td>9</td></tr>
+<tr class="d1"><td>ALIGNED_READS</td><td>2</td></tr>
+<tr class="d0"><td>TOTAL_BIAS</td><td>0</td></tr>
+<tr class="d1"><td>LOW_GC_BIAS</td><td>0</td></tr>
+<tr class="d0"><td>MID_GC_BIAS</td><td>0</td></tr>
+<tr class="d1"><td>HIGH_GC_BIAS</td><td>0</td></tr>
+<tr class="d0"><td>JAFFE_BIAS_METRIC
+</td><td>0
+</td></tr>
+</table>
+<b>Picard log</b><hr/>
+<pre>[Thu Nov 04 17:24:17 EDT 2010] net.sf.picard.analysis.CollectGcBiasMetrics REFERENCE_SEQUENCE=/share/shared/relul.galaxy/database/files/000/dataset_3.dat.fasta INPUT=/share/shared/relul.galaxy/database/files/000/dataset_18.dat OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.out CHART_OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.pdf SUMMARY_OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.xls WINDOW_SIZE=100 MINIMUM_GENOME_FRACTION=1.0E-5 TMP_DIR=/export/tmp/relul VALIDATION_STRINGENCY=LENIENT    VERBOSITY=INFO QUIET=false COMPRESSION_LEVEL=5 MAX_RECORDS_IN_RAM=500000 CREATE_INDEX=false CREATE_MD5_FILE=false
+INFO	2010-11-04 17:24:17	CollectGcBiasMetrics	Processed: chrM
+INFO	2010-11-04 17:24:17	CollectGcBiasMetrics	Processed: chr20
+ERROR	2010-11-04 17:24:18	ProcessExecutor	There were 50 or more warnings (use warnings() to see the first 50)
+INFO	2010-11-04 17:24:18	ProcessExecutor	null device 
+INFO	2010-11-04 17:24:18	ProcessExecutor	          1 
+[Thu Nov 04 17:24:18 EDT 2010] net.sf.picard.analysis.CollectGcBiasMetrics done.
+Runtime.totalMemory()=12255232
+</pre><hr/>The freely available <a href="http://picard.sourceforge.net/command-line-overview.shtml">Picard software</a> 
+generated all outputs reported here, using this command line:<br/>
+<pre>java -Xmx4g -jar /share/shared/relul.galaxy/tool-data/shared/jars/CollectGcBiasMetrics.jar REFERENCE_SEQUENCE=/share/shared/relul.galaxy/database/files/000/dataset_3.dat.fasta WINDOW_SIZE=100 MINIMUM_GENOME_FRACTION=1e-05 INPUT=/share/shared/relul.galaxy/database/files/000/dataset_18.dat OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.out TMP_DIR=/export/tmp/relul CHART_OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.pdf SUMMARY_OUTPUT=/share/shared/relul.galaxy/database/job_working_directory/22/dataset_22_files/rgPicardGCBiasMetrics.xls VALIDATION_STRINGENCY=LENIENT</pre>
+</div></body></html>
+

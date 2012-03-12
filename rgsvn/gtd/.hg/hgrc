@@ -1,0 +1,6 @@
+[ui]
+username = Ross Lazarus <ross.lazarus@gmail.com>
+ignore = /share/shared/galaxy/.hg/hgignore
+
+[paths]
+default = https://fubar@bitbucket.org/lullis/galaxy-tools-dev
